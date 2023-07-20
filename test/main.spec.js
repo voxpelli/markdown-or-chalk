@@ -1,11 +1,12 @@
 import chai from 'chai';
 
-import { something } from '../index.js';
+import { MarkdownOrChalk } from '../index.js';
 
-chai.should();
+const should = chai.should();
 
 describe('something', () => {
   it('should work', async () => {
-    await something();
+    const foo = new MarkdownOrChalk(false);
+    should.exist(foo);
   });
 });

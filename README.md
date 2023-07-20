@@ -1,11 +1,9 @@
-# Node Module Template
+# Markdown or Chalk
 
-A GitHub template repo for node modules
+Prints through a single interface as Chalk enhanced CLI output or as Markdown
 
-<!--
-[![npm version](https://img.shields.io/npm/v/buffered-async-iterable.svg?style=flat)](https://www.npmjs.com/package/buffered-async-iterable)
-[![npm downloads](https://img.shields.io/npm/dm/buffered-async-iterable.svg?style=flat)](https://www.npmjs.com/package/buffered-async-iterable)
--->
+[![npm version](https://img.shields.io/npm/v/markdown-or-chalk.svg?style=flat)](https://www.npmjs.com/package/markdown-or-chalk)
+[![npm downloads](https://img.shields.io/npm/dm/markdown-or-chalk.svg?style=flat)](https://www.npmjs.com/package/markdown-or-chalk)
 [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg)](https://github.com/voxpelli/eslint-config)
 [![Module type: ESM](https://img.shields.io/badge/module%20type-esm-brightgreen)](https://github.com/voxpelli/badges-cjs-esm)
 [![Types in JS](https://img.shields.io/badge/types_in_js-yes-brightgreen)](https://github.com/voxpelli/types-in-js)
@@ -16,22 +14,22 @@ A GitHub template repo for node modules
 ### Simple
 
 ```javascript
-import { something } from '@voxpelli/node-module-template';
+import { MarkdownOrChalk } from 'markdown-or-chalk';
 
-// Use that something
+const printAsMarkdown = true;
+const format = new ChalkOrMarkdown(printAsMarkdown);
+
+format.header('Wow');
 ```
 
-## API
+## Exports
 
-### `something(input, { configParam }) => Promise<output>`
-
-Takes a value (`input`), does something configured by the config (`configParam`) and returns the processed value asyncly(`output`)
-
-## Similar modules
-
-* [`example`](https://example.com/) – is similar in this way
+* `MarkdownOrChalk`
+* `mdastLinkify`
+* `mdastListHelper`
 
 ## See also
 
-* [Announcement blog post](#)
-* [Announcement tweet](#)
+* [`chalk``](https://www.npmjs.com/package/chalk)
+* [`mdast`](https://www.npmjs.com/package/mdast)
+* [`mdast-util-to-markdown`](https://www.npmjs.com/package/mdast-util-to-markdown)
