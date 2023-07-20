@@ -31,6 +31,6 @@ format.header('Wow');
 
 ## See also
 
-* [`chalk``](https://www.npmjs.com/package/chalk)
+* [`chalk`](https://www.npmjs.com/package/chalk)
 * [`mdast`](https://www.npmjs.com/package/mdast)
 * [`mdast-util-to-markdown`](https://www.npmjs.com/package/mdast-util-to-markdown)
