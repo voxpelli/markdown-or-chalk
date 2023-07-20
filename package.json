@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^16.18.38",
+    "@types/node": "^18.16.19",
     "@voxpelli/eslint-config": "^18.0.0",
     "@voxpelli/tsconfig": "^8.0.0",
     "c8": "^8.0.0",
