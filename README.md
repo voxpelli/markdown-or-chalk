@@ -29,6 +29,10 @@ format.header('Wow');
 * `mdastListHelper`
 * `mdastTableHelper`
 
+## Used by
+
+* [`compare-eslint-configs`](https://github.com/voxpelli/compare-eslint-configs)
+
 ## See also
 
 * [`chalk`](https://www.npmjs.com/package/chalk)
