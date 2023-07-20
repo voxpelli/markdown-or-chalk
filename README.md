@@ -27,6 +27,7 @@ format.header('Wow');
 * `MarkdownOrChalk`
 * `mdastLinkify`
 * `mdastListHelper`
+* `mdastTableHelper`
 
 ## See also
 
