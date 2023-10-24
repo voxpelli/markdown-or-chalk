@@ -56,13 +56,13 @@
     "terminal-link": "^3.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
-    "@types/mocha": "^10.0.1",
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.3",
     "@types/node": "^18.16.19",
     "@voxpelli/eslint-config": "^18.0.0",
     "@voxpelli/tsconfig": "^8.0.0",
-    "c8": "^8.0.0",
-    "chai": "^4.3.7",
+    "c8": "^8.0.1",
+    "chai": "^4.3.10",
     "eslint": "^8.45.0",
     "eslint-plugin-es-x": "^7.1.0",
     "eslint-plugin-import": "^2.27.5",
@@ -77,7 +77,7 @@
     "installed-check": "^8.0.0",
     "knip": "^2.16.0",
     "mocha": "^10.2.0",
-    "npm-run-all2": "^6.0.6",
+    "npm-run-all2": "^6.1.1",
     "type-coverage": "^2.26.0",
     "typescript": "~5.1.6"
   }
