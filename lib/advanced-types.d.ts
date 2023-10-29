@@ -6,7 +6,10 @@ export interface AnsiTextElement extends MdastLiteral {
 
 // Add nodes to mdast content.
 declare module 'mdast' {
-  interface StaticPhrasingContentMap {
+  interface RootContentMap {
+    ansiTextElement: AnsiTextElement;
+  }
+  interface PhrasingContentMap {
     ansiTextElement: AnsiTextElement;
   }
 }
