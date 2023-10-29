@@ -1,4 +1,4 @@
-import { Literal as MdastLiteral } from 'mdast';
+import type { Literal as MdastLiteral } from 'mdast';
 
 export interface AnsiTextElement extends MdastLiteral {
   type: 'ansiTextElement';
