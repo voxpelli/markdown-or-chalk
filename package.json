@@ -55,8 +55,8 @@
     "terminal-link": "^3.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.9",
-    "@types/mocha": "^10.0.3",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^18.18.7",
     "@voxpelli/eslint-config": "^19.0.0",
     "@voxpelli/tsconfig": "^9.0.0",
