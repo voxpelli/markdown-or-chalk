@@ -37,7 +37,7 @@
     "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts' ! -name 'index.d.ts')",
     "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts')",
     "clean": "run-p clean:*",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prepublishOnly": "run-s build",
     "test:mocha": "c8 --reporter=lcov --reporter text mocha 'test/**/*.spec.js'",
     "test-ci": "run-s test:*",
