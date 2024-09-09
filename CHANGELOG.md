@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.2](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.1...v0.2.2) (2024-09-09)
+
+
+### 🌟 Features
+
+* export `Table` type ([58115e9](https://github.com/voxpelli/markdown-or-chalk/commit/58115e920c664d12444da261c01d39f05ad4432c))
+
+
+### 🧹 Chores
+
+* **deps:** lockfile maintenance ([f465b02](https://github.com/voxpelli/markdown-or-chalk/commit/f465b02a83f859c53264a41493cf323028365663))
+* **deps:** lockfile maintenance ([db84572](https://github.com/voxpelli/markdown-or-chalk/commit/db8457232646fd7ca185abd4aae9c35d15e5444a))
+* **deps:** update dev dependencies ([6135250](https://github.com/voxpelli/markdown-or-chalk/commit/6135250c7efeb00d809b82600053e775a3600fae))
+* **deps:** update dev dependencies ([5667ccc](https://github.com/voxpelli/markdown-or-chalk/commit/5667ccc1b425ccff5710943a8c8f4f5ff84867f6))
+* **deps:** update linting dependencies ([#13](https://github.com/voxpelli/markdown-or-chalk/issues/13)) ([04f6650](https://github.com/voxpelli/markdown-or-chalk/commit/04f6650f8778c0ddd4189b24db9d387284529ba1))
+* **deps:** update test dependencies ([#17](https://github.com/voxpelli/markdown-or-chalk/issues/17)) ([392c188](https://github.com/voxpelli/markdown-or-chalk/commit/392c18816419c5f93391b760f23531b6a2dbcf29))
+* **deps:** update type dependencies ([#15](https://github.com/voxpelli/markdown-or-chalk/issues/15)) ([3380987](https://github.com/voxpelli/markdown-or-chalk/commit/3380987f7df6119f9cfe29a42ba0198dbc5575ce))
+
 ## [0.2.1](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.0...v0.2.1) (2024-06-25)
 
 
