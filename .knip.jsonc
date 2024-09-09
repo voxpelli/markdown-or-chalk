@@ -3,6 +3,5 @@
   "entry": [
     "index.js",
     "index.d.ts"
-  ],
-  "ignoreDependencies": ["@types/mocha"]
+  ]
 }
