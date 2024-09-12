@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.3](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.2...v0.2.3) (2024-09-12)
+
+
+### 🌟 Features
+
+* add support for code blocks in CLI output ([593c91d](https://github.com/voxpelli/markdown-or-chalk/commit/593c91d1829fa672085404191a08c9e23e628ac3))
+
+
+### 🧹 Chores
+
+* **deps:** update dependency husky to ^9.1.6 ([#25](https://github.com/voxpelli/markdown-or-chalk/issues/25)) ([8d46473](https://github.com/voxpelli/markdown-or-chalk/commit/8d46473ff9e1606aca0055912fd56fe5a87ced98))
+* **deps:** update dependency knip to ^5.30.1 ([#27](https://github.com/voxpelli/markdown-or-chalk/issues/27)) ([01330ec](https://github.com/voxpelli/markdown-or-chalk/commit/01330ecfa5a9828480e175b4343657667b214ee0))
+
 ## [0.2.2](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.1...v0.2.2) (2024-09-09)
 
 
