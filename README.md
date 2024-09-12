@@ -31,6 +31,7 @@ format.header('Wow');
 
 ## Used by
 
+* [`@voxpelli/pretty-ts-errors-cli`](https://github.com/voxpelli/pretty-ts-errors-cli)
 * [`compare-eslint-configs`](https://github.com/voxpelli/compare-eslint-configs)
 
 ## See also
