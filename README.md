@@ -17,7 +17,7 @@ Prints through a single interface as Chalk enhanced CLI output or as Markdown
 import { MarkdownOrChalk } from 'markdown-or-chalk';
 
 const printAsMarkdown = true;
-const format = new ChalkOrMarkdown(printAsMarkdown);
+const format = new MarkdownOrChalk(printAsMarkdown);
 
 format.header('Wow');
 ```
