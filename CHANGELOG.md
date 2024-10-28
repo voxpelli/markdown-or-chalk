@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.4](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.3...v0.2.4) (2024-10-28)
+
+
+### 📚 Documentation
+
+* **readme:** add `@voxpelli/pretty-ts-errors-cli` ([79e1f4c](https://github.com/voxpelli/markdown-or-chalk/commit/79e1f4ce87400859fd5aed536f520546b7815ca8))
+* **readme:** fix example ([7c0bc1d](https://github.com/voxpelli/markdown-or-chalk/commit/7c0bc1d2343bdd25e4ce519d301865b053e61df1))
+
+
+### 🧹 Chores
+
+* **deps:** lockfile maintenance ([f0b7d85](https://github.com/voxpelli/markdown-or-chalk/commit/f0b7d852cd2cdfa57893fd6630d4f54cae6d5780))
+* **deps:** update dependency typescript to ~5.6.3 ([#26](https://github.com/voxpelli/markdown-or-chalk/issues/26)) ([8e0d579](https://github.com/voxpelli/markdown-or-chalk/commit/8e0d5793c269095928082f99e032900e0cad5cdd))
+* **deps:** update dev dependencies ([e7ee7cd](https://github.com/voxpelli/markdown-or-chalk/commit/e7ee7cd523915d81973b68f59460fad05584ea41))
+
 ## [0.2.3](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.2...v0.2.3) (2024-09-12)
 
 
