@@ -53,7 +53,7 @@
     "mdast-util-to-markdown": "^2.1.0",
     "mdast-util-to-string": "^4.0.0",
     "strip-ansi": "^7.1.0",
-    "terminal-link": "^3.0.0"
+    "terminal-link": "^5.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.20",
