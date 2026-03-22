@@ -1,13 +1,13 @@
 {
   "name": "markdown-or-chalk",
   "version": "0.2.3",
-  "description": "A GitHub template repo for node modules",
-  "homepage": "http://github.com/voxpelli/markdown-or-chalk",
+  "description": "Prints through a single interface as Chalk enhanced CLI output or as Markdown",
+  "homepage": "https://github.com/voxpelli/markdown-or-chalk",
   "repository": {
     "type": "git",
-    "url": "git://github.com/voxpelli/markdown-or-chalk.git"
+    "url": "https://github.com/voxpelli/markdown-or-chalk.git"
   },
-  "keywords": [],
+  "keywords": ["markdown", "chalk", "terminal", "formatting", "mdast", "cli", "ansi"],
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "MIT",
   "engines": {
