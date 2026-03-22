@@ -1,5 +1,5 @@
 {
-  "extends": "@voxpelli/tsconfig/node16.json",
+  "extends": "@voxpelli/tsconfig/node22.json",
   "files": [
     "index.js"
   ],
@@ -8,6 +8,6 @@
     "test/**/*",
   ],
   "compilerOptions": {
-    "types": ["node", "mocha"]
+    "types": ["node"]
   }
 }

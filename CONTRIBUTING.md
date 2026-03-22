@@ -8,8 +8,6 @@ cd markdown-or-chalk
 npm install
 ```
 
-Requires **Node.js >= 18.0.0**.
-
 ## Commands
 
 - `npm test` — full validation (lint + type-check + tests)
