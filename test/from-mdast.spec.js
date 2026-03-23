@@ -208,5 +208,48 @@ describe('fromMdast', () => {
       assert.ok(result.includes('item one'));
       assert.ok(result.includes('item two'));
     });
+
+    it('should pass through ansiTextElement value', () => {
+      const result = moc.fromMdast({
+        type: 'root',
+        // @ts-ignore — ansiTextElement is a custom mdast node type
+        children: [{ type: 'paragraph', children: [{ type: 'ansiTextElement', value: 'SYMBOL' }] }],
+      });
+      assert.ok(result.includes('SYMBOL'));
+    });
+
+    it('should render delete/strikethrough node', () => {
+      const result = moc.fromMdast({
+        type: 'root',
+        children: [{ type: 'paragraph', children: [{ type: 'delete', children: [{ type: 'text', value: 'removed' }] }] }],
+      });
+      assert.ok(result.includes('removed'));
+    });
+
+    it('should render thematic break as horizontal line', () => {
+      const result = moc.fromMdast({
+        type: 'root',
+        children: [{ type: 'thematicBreak' }],
+      });
+      assert.ok(result.includes('\u2500'));
+    });
+
+    it('should render ordered list with numbers', () => {
+      const result = moc.fromMdast({
+        type: 'root',
+        children: [{
+          type: 'list',
+          ordered: true,
+          start: 1,
+          spread: false,
+          children: [
+            { type: 'listItem', spread: false, children: [{ type: 'paragraph', children: [{ type: 'text', value: 'first' }] }] },
+            { type: 'listItem', spread: false, children: [{ type: 'paragraph', children: [{ type: 'text', value: 'second' }] }] },
+          ],
+        }],
+      });
+      assert.ok(result.includes('1.'));
+      assert.ok(result.includes('2.'));
+    });
   });
 });
