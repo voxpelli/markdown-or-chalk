@@ -22,12 +22,66 @@ const format = new MarkdownOrChalk(printAsMarkdown);
 format.header('Wow');
 ```
 
-## Exports
+## API
 
-* `MarkdownOrChalk`
-* `mdastLinkify`
-* `mdastListHelper`
-* `mdastTableHelper`
+### `new MarkdownOrChalk(useMarkdown)`
+
+Creates a formatter instance. Pass `true` for markdown output, `false` for chalk terminal output.
+
+### Instance Methods
+
+| Method | Description |
+|--------|-------------|
+| `header(text, level?)` | Heading (1-6). Markdown: `# text`. Chalk: bold+underline |
+| `bold(text)` | Bold. Markdown: `**text**`. Chalk: bold |
+| `dim(text)` | Dim/italic. Markdown: `_text_`. Chalk: dim |
+| `italic(text)` | Italic. Markdown: `_text_`. Chalk: italic |
+| `strikethrough(text)` | Strikethrough. Markdown: `~~text~~`. Chalk: strikethrough |
+| `code(text)` | Inline code. Markdown: `` `text` ``. Chalk: plain text |
+| `hyperlink(text, url, options?)` | Link. Markdown: `[text](url)`. Chalk: terminal link |
+| `list(items)` | Bullet list. Markdown: `* item`. Chalk: joined lines |
+| `indent(text, level?)` | Indent by level x 2 spaces |
+| `json(value)` | JSON output. Markdown: fenced code block. Chalk: plain JSON |
+| `table(rows, align?, options?)` | Table. Markdown: GFM table. Chalk: aligned columns |
+| `fromMdast(node, options?)` | Render any mdast node to string |
+
+### Getters
+
+| Getter | Returns |
+|--------|---------|
+| `chalk` | `ChalkInstance` in chalk mode, `undefined` in markdown mode |
+| `chalkOnly` | `this` in chalk mode, `undefined` in markdown mode |
+| `markdownOnly` | `this` in markdown mode, `undefined` in chalk mode |
+| `logSymbols` | `{info, success, warning, error}` — emoji or chalk-styled symbols |
+
+### Exported Helpers
+
+| Helper | Description |
+|--------|-------------|
+| `mdastTableHelper(rows, align?)` | Build an mdast Table node |
+| `mdastListHelper(items)` | Build an mdast List node |
+| `mdastLinkify(value, url, skipLinks?)` | Build an mdast Link or Text node |
+
+### Advanced: mdast helpers
+
+Compose `fromMdast` with the mdast helpers to build rich structured output:
+
+```javascript
+import { MarkdownOrChalk, mdastListHelper, mdastLinkify } from 'markdown-or-chalk';
+
+const format = new MarkdownOrChalk(true);
+
+const list = mdastListHelper([
+  [mdastLinkify('chalk', 'https://www.npmjs.com/package/chalk')],
+  [mdastLinkify('mdast', 'https://www.npmjs.com/package/mdast')],
+  ['plain text item'],
+]);
+
+console.log(format.fromMdast(list));
+// * [chalk](https://www.npmjs.com/package/chalk)
+// * [mdast](https://www.npmjs.com/package/mdast)
+// * plain text item
+```
 
 ## Used by
 
