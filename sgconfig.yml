@@ -1,0 +1,2 @@
+ruleDirs:
+  - node_modules/@voxpelli/ast-grep-rules/rules

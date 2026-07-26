@@ -7,6 +7,9 @@ import chalk from 'chalk';
 
 import { MarkdownOrChalk, mdastTableHelper } from '../index.js';
 
+/** @import { ColorSupportLevel } from 'chalk' */
+/** @import { Emphasis, TableCell, TableRow } from 'mdast' */
+
 describe('table', () => {
   describe('mdastTableHelper', () => {
     it('should return correct mdast Table structure', () => {
@@ -42,8 +45,8 @@ describe('table', () => {
     it('should normalize strings to text nodes in cells', () => {
       const result = mdastTableHelper([['hello']]);
 
-      const row = /** @type {import('mdast').TableRow} */ (result.children[0]);
-      const cell = /** @type {import('mdast').TableCell} */ (row.children[0]);
+      const row = /** @type {TableRow} */ (result.children[0]);
+      const cell = /** @type {TableCell} */ (row.children[0]);
 
       assert.deepEqual(cell, {
         type: 'tableCell',
@@ -52,15 +55,15 @@ describe('table', () => {
     });
 
     it('should pass through phrasing content nodes unchanged', () => {
-      /** @type {import('mdast').Emphasis} */
+      /** @type {Emphasis} */
       const emphasisNode = {
         type: 'emphasis',
         children: [{ type: 'text', value: 'important' }],
       };
 
       const result = mdastTableHelper([[emphasisNode]]);
-      const row = /** @type {import('mdast').TableRow} */ (result.children[0]);
-      const cell = /** @type {import('mdast').TableCell} */ (row.children[0]);
+      const row = /** @type {TableRow} */ (result.children[0]);
+      const cell = /** @type {TableCell} */ (row.children[0]);
 
       assert.deepEqual(cell, {
         type: 'tableCell',
@@ -141,12 +144,12 @@ describe('table', () => {
     /** @type {MarkdownOrChalk} */
     let moc;
 
-    /** @type {import('chalk').ColorSupportLevel} */
+    /** @type {ColorSupportLevel} */
     let originalLevel;
 
     before(() => {
       originalLevel = chalk.level;
-      chalk.level = /** @type {import('chalk').ColorSupportLevel} */ (0);
+      chalk.level = /** @type {ColorSupportLevel} */ (0);
       moc = new MarkdownOrChalk(false);
     });
 

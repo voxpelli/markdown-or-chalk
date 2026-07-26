@@ -38,6 +38,7 @@ describe('mode constructor', () => {
   });
 
   it('invalid mode throws TypeError', () => {
-    assert.throws(() => new MarkdownOrChalk(/** @type {any} */ ('invalid')), TypeError);
+    // @ts-expect-error
+    assert.throws(() => new MarkdownOrChalk('invalid'), TypeError);
   });
 });

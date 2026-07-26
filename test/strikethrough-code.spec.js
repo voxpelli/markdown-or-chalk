@@ -7,6 +7,8 @@ import chalk from 'chalk';
 
 import { MarkdownOrChalk } from '../index.js';
 
+/** @import { ColorSupportLevel } from 'chalk' */
+
 describe('strikethrough and code', () => {
   describe('markdown mode', () => {
     /** @type {MarkdownOrChalk} */
@@ -25,11 +27,11 @@ describe('strikethrough and code', () => {
   describe('chalk mode', () => {
     /** @type {MarkdownOrChalk} */
     let moc;
-    /** @type {import('chalk').ColorSupportLevel} */
+    /** @type {ColorSupportLevel} */
     let originalLevel;
     before(() => {
       originalLevel = chalk.level;
-      chalk.level = /** @type {import('chalk').ColorSupportLevel} */ (0);
+      chalk.level = /** @type {ColorSupportLevel} */ (0);
       moc = new MarkdownOrChalk(false);
     });
     after(() => { chalk.level = originalLevel; });
