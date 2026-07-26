@@ -1,27 +1,27 @@
 import assert from 'node:assert/strict';
 import {
-  after, before, describe, it,
+  afterEach, beforeEach, describe, it,
 } from 'node:test';
 
 import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
-import { getOutputStyler } from '../index.js';
+import { getMdastOutputter } from '../index.js';
 
-/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
+/** @import { FromMdast } from '../index.js' */
 
 describe('fromMdast', () => {
   describe('markdown mode', () => {
-    /** @type {AnyStyledOutput} */
-    let moc;
+    /** @type {FromMdast} */
+    let fromMdast;
 
-    before(() => {
-      moc = getOutputStyler('markdown');
+    beforeEach(() => {
+      fromMdast = getMdastOutputter('markdown');
     });
 
     it('should produce text from a paragraph node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [{ type: 'text', value: 'Hello world' }],
       });
@@ -29,7 +29,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce italic markdown from an emphasis node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'emphasis', children: [{ type: 'text', value: 'italic text' }] },
@@ -41,7 +41,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce bold markdown from a strong node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'strong', children: [{ type: 'text', value: 'bold text' }] },
@@ -51,7 +51,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce text from a root wrapping a paragraph', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'root',
         children: [
           {
@@ -64,7 +64,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce a heading with hash prefix', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'heading',
         depth: 2,
         children: [{ type: 'text', value: 'Title' }],
@@ -73,7 +73,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce a markdown link', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           {
@@ -87,7 +87,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce a fenced code block', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'code',
         lang: 'js',
         value: 'const x = 1;',
@@ -98,7 +98,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce inline code with backticks', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'inlineCode', value: 'foo()' },
@@ -108,25 +108,25 @@ describe('fromMdast', () => {
     });
   });
 
-  describe('chalk mode', () => {
-    /** @type {AnyStyledOutput} */
-    let moc;
+  describe('ansi mode', () => {
+    /** @type {FromMdast} */
+    let fromMdast;
 
     /** @type {ColorSupportLevel} */
     let originalLevel;
 
-    before(() => {
+    beforeEach(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = getOutputStyler('ansi');
+      fromMdast = getMdastOutputter('ansi');
     });
 
-    after(() => {
+    afterEach(() => {
       chalk.level = originalLevel;
     });
 
     it('should produce text from emphasis node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'emphasis', children: [{ type: 'text', value: 'styled' }] },
@@ -136,7 +136,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce text from strong node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
@@ -146,7 +146,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce text from heading node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'heading',
         depth: 1,
         children: [{ type: 'text', value: 'Heading' }],
@@ -155,7 +155,7 @@ describe('fromMdast', () => {
     });
 
     it('should produce text or url from link node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           {
@@ -171,7 +171,7 @@ describe('fromMdast', () => {
     });
 
     it('should render code blocks with content', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'code',
         lang: 'js',
         value: 'const x = 1;',
@@ -180,7 +180,7 @@ describe('fromMdast', () => {
     });
 
     it('should render inline code with content', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'paragraph',
         children: [
           { type: 'inlineCode', value: 'bar()' },
@@ -190,7 +190,7 @@ describe('fromMdast', () => {
     });
 
     it('should render blockquote with content', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'blockquote',
         children: [
           {
@@ -203,7 +203,7 @@ describe('fromMdast', () => {
     });
 
     it('should render a list with items', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'list',
         ordered: false,
         children: [
@@ -216,7 +216,7 @@ describe('fromMdast', () => {
     });
 
     it('should pass through ansiTextElement value', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'root',
         // @ts-ignore — ansiTextElement is a custom mdast node type
         children: [{ type: 'paragraph', children: [{ type: 'ansiTextElement', value: 'SYMBOL' }] }],
@@ -225,7 +225,7 @@ describe('fromMdast', () => {
     });
 
     it('should render delete/strikethrough node', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'root',
         children: [{ type: 'paragraph', children: [{ type: 'delete', children: [{ type: 'text', value: 'removed' }] }] }],
       });
@@ -233,7 +233,7 @@ describe('fromMdast', () => {
     });
 
     it('should render thematic break as horizontal line', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'root',
         children: [{ type: 'thematicBreak' }],
       });
@@ -241,7 +241,7 @@ describe('fromMdast', () => {
     });
 
     it('should render ordered list with numbers', () => {
-      const result = moc.fromMdast({
+      const result = fromMdast({
         type: 'root',
         children: [{
           type: 'list',
