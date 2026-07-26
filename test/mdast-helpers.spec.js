@@ -4,6 +4,8 @@ import { describe, it } from 'node:test';
 import { mdastLinkify, mdastListHelper } from '../index.js';
 import { ensurePhrasingContentList } from '../lib/mdast-helpers.js';
 
+/** @import { Emphasis, Paragraph, Text } from 'mdast' */
+
 describe('mdast helpers', () => {
   describe('mdastLinkify', () => {
     it('should return a link node when url is provided', () => {
@@ -53,7 +55,7 @@ describe('mdast helpers', () => {
     });
 
     it('should pass through a single mdast node unchanged', () => {
-      /** @type {import('mdast').Text} */
+      /** @type {Text} */
       const node = { type: 'text', value: 'existing' };
 
       const result = ensurePhrasingContentList(node);
@@ -62,7 +64,7 @@ describe('mdast helpers', () => {
     });
 
     it('should normalize a mixed array of strings and nodes', () => {
-      /** @type {import('mdast').Emphasis} */
+      /** @type {Emphasis} */
       const emphNode = { type: 'emphasis', children: [{ type: 'text', value: 'bold' }] };
 
       assert.deepEqual(ensurePhrasingContentList(['hello', emphNode]), [
@@ -98,7 +100,7 @@ describe('mdast helpers', () => {
       for (const child of result.children) {
         assert.equal(child.type, 'listItem');
         assert.ok(child.children !== undefined);
-        assert.equal(/** @type {import('mdast').Paragraph} */ (child.children[0]).type, 'paragraph');
+        assert.equal(/** @type {Paragraph} */ (child.children[0]).type, 'paragraph');
       }
     });
 
@@ -113,7 +115,7 @@ describe('mdast helpers', () => {
     });
 
     it('should handle mdast node items correctly', () => {
-      /** @type {import('mdast').Emphasis} */
+      /** @type {Emphasis} */
       const emphNode = { type: 'emphasis', children: [{ type: 'text', value: 'em' }] };
 
       const result = mdastListHelper([emphNode]);
