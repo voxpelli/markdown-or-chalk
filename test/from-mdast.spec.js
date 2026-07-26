@@ -4,6 +4,7 @@ import {
 } from 'node:test';
 
 import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
 
 import { MarkdownOrChalk } from '../index.js';
 
@@ -23,7 +24,7 @@ describe('fromMdast', () => {
         type: 'paragraph',
         children: [{ type: 'text', value: 'Hello world' }],
       });
-      assert.ok(result.includes('Hello world'));
+      assert.match(result, /Hello world/);
     });
 
     it('should produce italic markdown from an emphasis node', () => {
@@ -33,9 +34,9 @@ describe('fromMdast', () => {
           { type: 'emphasis', children: [{ type: 'text', value: 'italic text' }] },
         ],
       });
-      assert.ok(result.includes('italic text'));
+      assert.match(result, /italic text/);
       // mdast-util-to-markdown uses * for emphasis by default, not _
-      assert.ok(result.includes('*italic text*') || result.includes('_italic text_'));
+      assert.match(result, /\*italic text\*|_italic text_/);
     });
 
     it('should produce bold markdown from a strong node', () => {
@@ -45,7 +46,7 @@ describe('fromMdast', () => {
           { type: 'strong', children: [{ type: 'text', value: 'bold text' }] },
         ],
       });
-      assert.ok(result.includes('**bold text**'));
+      assert.match(result, /\*\*bold text\*\*/);
     });
 
     it('should produce text from a root wrapping a paragraph', () => {
@@ -58,7 +59,7 @@ describe('fromMdast', () => {
           },
         ],
       });
-      assert.ok(result.includes('root paragraph'));
+      assert.match(result, /root paragraph/);
     });
 
     it('should produce a heading with hash prefix', () => {
@@ -67,7 +68,7 @@ describe('fromMdast', () => {
         depth: 2,
         children: [{ type: 'text', value: 'Title' }],
       });
-      assert.ok(result.includes('## Title'));
+      assert.match(result, /## Title/);
     });
 
     it('should produce a markdown link', () => {
@@ -81,7 +82,7 @@ describe('fromMdast', () => {
           },
         ],
       });
-      assert.ok(result.includes('[Example](https://example.com)'));
+      assert.match(result, /\[Example\]\(https:\/\/example\.com\)/);
     });
 
     it('should produce a fenced code block', () => {
@@ -90,9 +91,9 @@ describe('fromMdast', () => {
         lang: 'js',
         value: 'const x = 1;',
       });
-      assert.ok(result.includes('```js'));
-      assert.ok(result.includes('const x = 1;'));
-      assert.ok(result.includes('```'));
+      assert.match(result, /```js/);
+      assert.match(result, /const x = 1;/);
+      assert.match(result, /```/);
     });
 
     it('should produce inline code with backticks', () => {
@@ -102,7 +103,7 @@ describe('fromMdast', () => {
           { type: 'inlineCode', value: 'foo()' },
         ],
       });
-      assert.ok(result.includes('`foo()`'));
+      assert.match(result, /`foo\(\)`/);
     });
   });
 
@@ -130,7 +131,7 @@ describe('fromMdast', () => {
           { type: 'emphasis', children: [{ type: 'text', value: 'styled' }] },
         ],
       });
-      assert.ok(result.includes('styled'));
+      assert.match(result, /styled/);
     });
 
     it('should produce text from strong node', () => {
@@ -140,7 +141,7 @@ describe('fromMdast', () => {
           { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
         ],
       });
-      assert.ok(result.includes('bold'));
+      assert.match(result, /bold/);
     });
 
     it('should produce text from heading node', () => {
@@ -149,7 +150,7 @@ describe('fromMdast', () => {
         depth: 1,
         children: [{ type: 'text', value: 'Heading' }],
       });
-      assert.ok(result.includes('Heading'));
+      assert.match(result, /Heading/);
     });
 
     it('should produce text or url from link node', () => {
@@ -174,7 +175,7 @@ describe('fromMdast', () => {
         lang: 'js',
         value: 'const x = 1;',
       });
-      assert.ok(result.includes('const x = 1;'));
+      assert.match(stripAnsi(result), /const x = 1;/);
     });
 
     it('should render inline code with content', () => {
@@ -184,7 +185,7 @@ describe('fromMdast', () => {
           { type: 'inlineCode', value: 'bar()' },
         ],
       });
-      assert.ok(result.includes('bar()'));
+      assert.match(result, /bar\(\)/);
     });
 
     it('should render blockquote with content', () => {
@@ -197,7 +198,7 @@ describe('fromMdast', () => {
           },
         ],
       });
-      assert.ok(result.includes('quoted text'));
+      assert.match(result, /quoted text/);
     });
 
     it('should render a list with items', () => {
@@ -209,8 +210,8 @@ describe('fromMdast', () => {
           { type: 'listItem', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'item two' }] }] },
         ],
       });
-      assert.ok(result.includes('item one'));
-      assert.ok(result.includes('item two'));
+      assert.match(result, /item one/);
+      assert.match(result, /item two/);
     });
 
     it('should pass through ansiTextElement value', () => {
@@ -219,7 +220,7 @@ describe('fromMdast', () => {
         // @ts-ignore — ansiTextElement is a custom mdast node type
         children: [{ type: 'paragraph', children: [{ type: 'ansiTextElement', value: 'SYMBOL' }] }],
       });
-      assert.ok(result.includes('SYMBOL'));
+      assert.match(result, /SYMBOL/);
     });
 
     it('should render delete/strikethrough node', () => {
@@ -227,7 +228,7 @@ describe('fromMdast', () => {
         type: 'root',
         children: [{ type: 'paragraph', children: [{ type: 'delete', children: [{ type: 'text', value: 'removed' }] }] }],
       });
-      assert.ok(result.includes('removed'));
+      assert.match(result, /removed/);
     });
 
     it('should render thematic break as horizontal line', () => {
@@ -235,7 +236,7 @@ describe('fromMdast', () => {
         type: 'root',
         children: [{ type: 'thematicBreak' }],
       });
-      assert.ok(result.includes('\u2500'));
+      assert.match(result, /─/);
     });
 
     it('should render ordered list with numbers', () => {
@@ -252,8 +253,8 @@ describe('fromMdast', () => {
           ],
         }],
       });
-      assert.ok(result.includes('1.'));
-      assert.ok(result.includes('2.'));
+      assert.match(result, /1\./);
+      assert.match(result, /2\./);
     });
   });
 });
