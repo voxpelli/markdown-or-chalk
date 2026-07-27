@@ -80,7 +80,7 @@
     "knip": "^5.34.1",
     "npm-run-all2": "^7.0.1",
     "type-coverage": "^2.30.1",
-    "typescript": "~6.0.0",
+    "typescript": "~6.0.3",
     "validate-conventional-commit": "^1.0.4"
   }
 }
