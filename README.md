@@ -13,34 +13,17 @@ Print through a single interface as Markdown or terminal output (`ansi` / `chalk
 
 The core idea: keep your formatting calls the same, and decide output style at runtime.
 
-### Runtime configurable (CLI/env)
-
 ```javascript
 import { getOutputStyler } from 'markdown-or-chalk';
 
-const style = resolveOutputStyle({
-  cliFlag: '--format',
-  envVar: 'OUTPUT_FORMAT',
-  allowed: ['markdown', 'ansi', 'chalk'],
-  fallback: 'ansi',
-});
+const printAsMarkdown = true;
 
-const format = getOutputStyler(style);
+const format = getOutputStyler(printAsMarkdown);
 
 format.header('Wow');
 ```
 
 This lets one code path support terminal UX and markdown/report output.
-
-### Fixed style (for single-purpose scripts)
-
-```javascript
-import { getOutputStyler } from 'markdown-or-chalk';
-
-const format = getOutputStyler('markdown');
-```
-
-Use a fixed style when output never changes (for example a dedicated markdown export script).
 
 ## API
 
