@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
 import { before, describe, it } from 'node:test';
 
-import { MarkdownOrChalk } from '../index.js';
+import { getOutputStyler } from '../index.js';
+
+/** @import { AnyStyledOutput } from '../index.js' */
 
 describe('indent', () => {
-  /** @type {MarkdownOrChalk} */
+  /** @type {AnyStyledOutput} */
   let moc;
-  before(() => { moc = new MarkdownOrChalk(true); });
+  before(() => { moc = getOutputStyler('markdown'); });
 
   it('should indent by 2 spaces by default', () => {
     assert.equal(moc.indent('text'), '  text');
@@ -21,7 +23,7 @@ describe('indent', () => {
   });
 
   it('should be mode-agnostic', () => {
-    const chalk = new MarkdownOrChalk(false);
-    assert.equal(chalk.indent('text'), '  text');
+    const ansi = getOutputStyler('ansi');
+    assert.equal(ansi.indent('text'), '  text');
   });
 });

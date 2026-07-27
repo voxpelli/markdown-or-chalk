@@ -5,17 +5,18 @@ import {
 
 import chalk from 'chalk';
 
-import { MarkdownOrChalk } from '../index.js';
+import { getOutputStyler } from '../index.js';
 
+/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 
 describe('MarkdownOrChalk', () => {
   describe('markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     before(() => {
-      moc = new MarkdownOrChalk(true);
+      moc = getOutputStyler('markdown');
     });
 
     describe('constructor', () => {
@@ -69,16 +70,12 @@ describe('MarkdownOrChalk', () => {
     });
 
     describe('getters', () => {
-      it('chalk should be undefined', () => {
-        assert.equal(moc.chalk, undefined);
+      it('style should expose its type', () => {
+        assert.equal(moc.type, 'markdown');
       });
 
-      it('chalkOnly should be undefined', () => {
-        assert.equal(moc.chalkOnly, undefined);
-      });
-
-      it('markdownOnly should be the instance itself', () => {
-        assert.equal(/** @type {MarkdownOrChalk} */ (moc.markdownOnly), moc);
+      it('should expose a markdown-style output object', () => {
+        assert.equal(moc.type, 'markdown');
       });
 
       it('logSymbols should have info, success, warning, error keys with string values', () => {
@@ -96,7 +93,7 @@ describe('MarkdownOrChalk', () => {
   });
 
   describe('chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     /** @type {ColorSupportLevel} */
@@ -105,7 +102,7 @@ describe('MarkdownOrChalk', () => {
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
 
     after(() => {
@@ -161,16 +158,12 @@ describe('MarkdownOrChalk', () => {
     });
 
     describe('getters', () => {
-      it('chalk should exist and be truthy', () => {
-        assert.ok(moc.chalk !== undefined && moc.chalk !== null);
+      it('style should expose its type', () => {
+        assert.equal(moc.type, 'ansi');
       });
 
-      it('chalkOnly should equal the instance', () => {
-        assert.equal(/** @type {MarkdownOrChalk} */ (moc.chalkOnly), moc);
-      });
-
-      it('markdownOnly should be undefined', () => {
-        assert.equal(moc.markdownOnly, undefined);
+      it('should expose an ansi-style output object', () => {
+        assert.equal(moc.type, 'ansi');
       });
 
       it('logSymbols should have info, success, warning, error keys', () => {

@@ -5,8 +5,9 @@ import {
 
 import chalk from 'chalk';
 
-import { MarkdownOrChalk, mdastTableHelper } from '../index.js';
+import { getOutputStyler, mdastTableHelper } from '../index.js';
 
+/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 /** @import { Emphasis, TableCell, TableRow } from 'mdast' */
 
@@ -91,11 +92,11 @@ describe('table', () => {
   });
 
   describe('table() markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     before(() => {
-      moc = new MarkdownOrChalk(true);
+      moc = getOutputStyler('markdown');
     });
 
     it('should produce markdown with pipe characters', () => {
@@ -141,7 +142,7 @@ describe('table', () => {
   });
 
   describe('table() chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     /** @type {ColorSupportLevel} */
@@ -150,7 +151,7 @@ describe('table', () => {
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
 
     after(() => {

@@ -1,9 +1,12 @@
-export { mdastListHelper } from './lib/list.js';
+// *** Helpers ***
+
+export { mdastLinkify } from './lib/utils/mdast-helpers.js';
+export { mdastListHelper } from './lib/utils/mdast-list.js';
+export { mdastTableHelper } from './lib/utils/mdast-table.js';
+
+// *** Main export ***
+
 export {
-  MarkdownOrChalk,
-  MODE_CHALK,
-  MODE_HTML,
-  MODE_MARKDOWN,
-} from './lib/main.js';
-export { mdastLinkify } from './lib/mdast-helpers.js';
-export { mdastTableHelper } from './lib/table.js';
+  getMdastOutputter,
+  getOutputStyler,
+} from './lib/main.cjs';

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { mdastLinkify, mdastListHelper } from '../index.js';
-import { ensurePhrasingContentList } from '../lib/mdast-helpers.js';
+import { ensurePhrasingContentList } from '../lib/utils/mdast-helpers.js';
 
 /** @import { Emphasis, Paragraph, Text } from 'mdast' */
 

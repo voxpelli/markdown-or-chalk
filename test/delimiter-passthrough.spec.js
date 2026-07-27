@@ -1,14 +1,16 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { MarkdownOrChalk } from '../lib/main.js';
+import { getOutputStyler } from '../index.js';
+
+/** @import { AnyStyledOutput } from '../index.js' */
 
 describe('delimiter characters in markdown mode input', () => {
-  /** @type {MarkdownOrChalk} */
+  /** @type {AnyStyledOutput} */
   let md;
 
   /** @param {undefined} [_] */
-  const setup = (_) => { md = new MarkdownOrChalk(true); };
+  const setup = (_) => { md = getOutputStyler('markdown'); };
 
   it('bold() wraps input containing ** delimiters, doubling them', () => {
     setup();
