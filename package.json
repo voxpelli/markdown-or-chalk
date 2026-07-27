@@ -1,6 +1,6 @@
 {
   "name": "markdown-or-chalk",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Prints through a single interface as Chalk enhanced CLI output or as Markdown",
   "homepage": "https://github.com/voxpelli/markdown-or-chalk",
   "repository": {
