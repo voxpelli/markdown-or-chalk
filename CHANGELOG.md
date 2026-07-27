@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.1](https://github.com/voxpelli/markdown-or-chalk/compare/v0.3.0...v0.3.1) (2026-07-27)
+
+
+### 📚 Documentation
+
+* README with new API + migration instructions ([6c51297](https://github.com/voxpelli/markdown-or-chalk/commit/6c51297fdfb627870c4ca21b809eaaf046cc6a60))
+* update badges ([1b93dcc](https://github.com/voxpelli/markdown-or-chalk/commit/1b93dccdb944a78e39320e2dd28bb09043d2db11))
+
+
+### 🧹 Chores
+
+* **deps:** update dependency chalk to v6 ([#43](https://github.com/voxpelli/markdown-or-chalk/issues/43)) ([8eeb76b](https://github.com/voxpelli/markdown-or-chalk/commit/8eeb76b8d287bfeafd422e66d467368c469abfcf))
+
 ## [0.3.0](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.3...v0.3.0) (2026-07-27)
 
 
