@@ -33,23 +33,23 @@
     "lib/*.d.ts.map"
   ],
   "scripts": {
+    "build": "run-s build:*",
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
-    "build": "run-s build:*",
+    "check": "run-s clean && run-p check:*",
     "check:installed-check": "installed-check -i @voxpelli/eslint-config -i eslint -i knip -i installed-check -i npm-run-all2",
     "check:knip": "knip",
     "check:lint": "eslint --report-unused-disable-directives .",
     "check:tsc": "tsc",
     "check:type-coverage": "type-coverage --detail --strict --at-least 95 --ignore-files 'test/*'",
-    "check": "run-s clean && run-p check:*",
-    "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts' ! -name 'index.d.ts')",
-    "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts')",
     "clean": "run-p clean:*",
+    "clean:declarations-lib": "rm -rf $(find lib -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts')",
+    "clean:declarations-top": "rm -rf $(find . -maxdepth 1 -type f -name '*.d.ts*' ! -name 'advanced-types.d.ts' ! -name 'index.d.ts')",
     "prepare": "husky",
     "prepublishOnly": "run-s build",
+    "test": "run-s check test:*",
     "test:node": "c8 --reporter=lcov --reporter text --lines 90 --branches 80 --functions 85 node --test 'test/**/*.spec.js'",
-    "test-ci": "run-s test:*",
-    "test": "run-s check test:*"
+    "test-ci": "run-s test:*"
   },
   "dependencies": {
     "@types/mdast": "^4.0.3",

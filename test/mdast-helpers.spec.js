@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { mdastListHelper, mdastLinkify } from '../index.js';
+import { mdastLinkify, mdastListHelper } from '../index.js';
 import { ensurePhrasingContentList } from '../lib/mdast-helpers.js';
 
 describe('mdast helpers', () => {
