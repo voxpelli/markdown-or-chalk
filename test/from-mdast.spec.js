@@ -6,17 +6,18 @@ import {
 import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
-import { MarkdownOrChalk } from '../index.js';
+import { getOutputStyler } from '../index.js';
 
+/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 
 describe('fromMdast', () => {
   describe('markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     before(() => {
-      moc = new MarkdownOrChalk(true);
+      moc = getOutputStyler('markdown');
     });
 
     it('should produce text from a paragraph node', () => {
@@ -108,7 +109,7 @@ describe('fromMdast', () => {
   });
 
   describe('chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     /** @type {ColorSupportLevel} */
@@ -117,7 +118,7 @@ describe('fromMdast', () => {
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
 
     after(() => {

@@ -5,17 +5,18 @@ import {
 
 import chalk from 'chalk';
 
-import { MarkdownOrChalk } from '../index.js';
+import { getOutputStyler } from '../index.js';
 
+/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 
 describe('list and json', () => {
   describe('list() markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     before(() => {
-      moc = new MarkdownOrChalk(true);
+      moc = getOutputStyler('markdown');
     });
 
     it('should format multiple items as a markdown list', () => {
@@ -32,7 +33,7 @@ describe('list and json', () => {
   });
 
   describe('list() chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     /** @type {ColorSupportLevel} */
@@ -41,7 +42,7 @@ describe('list and json', () => {
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
 
     after(() => {
@@ -61,11 +62,11 @@ describe('list and json', () => {
   });
 
   describe('json() markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     before(() => {
-      moc = new MarkdownOrChalk(true);
+      moc = getOutputStyler('markdown');
     });
 
     it('should wrap JSON in a code block', () => {
@@ -84,7 +85,7 @@ describe('list and json', () => {
   });
 
   describe('json() chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
 
     /** @type {ColorSupportLevel} */
@@ -93,7 +94,7 @@ describe('list and json', () => {
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
 
     after(() => {

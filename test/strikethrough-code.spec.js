@@ -5,15 +5,16 @@ import {
 
 import chalk from 'chalk';
 
-import { MarkdownOrChalk } from '../index.js';
+import { getOutputStyler } from '../index.js';
 
+/** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 
 describe('strikethrough and code', () => {
   describe('markdown mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
-    before(() => { moc = new MarkdownOrChalk(true); });
+    before(() => { moc = getOutputStyler('markdown'); });
 
     it('strikethrough should wrap in ~~', () => {
       assert.equal(moc.strikethrough('text'), '~~text~~');
@@ -25,14 +26,14 @@ describe('strikethrough and code', () => {
   });
 
   describe('chalk mode', () => {
-    /** @type {MarkdownOrChalk} */
+    /** @type {AnyStyledOutput} */
     let moc;
     /** @type {ColorSupportLevel} */
     let originalLevel;
     before(() => {
       originalLevel = chalk.level;
       chalk.level = /** @type {ColorSupportLevel} */ (0);
-      moc = new MarkdownOrChalk(false);
+      moc = getOutputStyler('ansi');
     });
     after(() => { chalk.level = originalLevel; });
 

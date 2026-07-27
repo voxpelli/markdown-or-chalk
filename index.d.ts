@@ -1,24 +1,28 @@
-export type * from './lib/advanced-types.d.ts';
+// *** Type exports ***
 
-export type {
-  MarkdownOrChalkMode,
-} from './lib/main.js';
+export type * from './lib/mdast-ansi-types.d.ts';
+export type * from './lib/mdast-output-types.d.ts';
+export type * from './lib/log-symbols-types.d.ts';
+export type * from './lib/style-interface-types.d.ts';
 
 export type {
   PhrasingContentOrString,
   PhrasingContentOrStringList,
-} from './lib/mdast-helpers.js';
+} from './lib/utils/mdast-helpers.js';
 
 export type {
   Table,
-} from './lib/table.js';
+} from './lib/utils/mdast-table.js';
 
-export { mdastListHelper } from './lib/list.js';
+// *** Helpers ***
+
+export { mdastLinkify } from './lib/utils/mdast-helpers.js';
+export { mdastListHelper } from './lib/utils/mdast-list.js';
+export { mdastTableHelper } from './lib/utils/mdast-table.js';
+
+// *** Main export ***
+
 export {
-  MarkdownOrChalk,
-  MODE_CHALK,
-  MODE_HTML,
-  MODE_MARKDOWN,
-} from './lib/main.js';
-export { mdastLinkify } from './lib/mdast-helpers.js';
-export { mdastTableHelper } from './lib/table.js';
+  getMdastOutputter,
+  getOutputStyler,
+} from './lib/main.cjs';
