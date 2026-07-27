@@ -2,19 +2,16 @@
 
 ## [0.3.1](https://github.com/voxpelli/markdown-or-chalk/compare/v0.3.0...v0.3.1) (2026-07-27)
 
-
 ### 📚 Documentation
 
 * README with new API + migration instructions ([6c51297](https://github.com/voxpelli/markdown-or-chalk/commit/6c51297fdfb627870c4ca21b809eaaf046cc6a60))
 * update badges ([1b93dcc](https://github.com/voxpelli/markdown-or-chalk/commit/1b93dccdb944a78e39320e2dd28bb09043d2db11))
-
 
 ### 🧹 Chores
 
 * **deps:** update dependency chalk to v6 ([#43](https://github.com/voxpelli/markdown-or-chalk/issues/43)) ([8eeb76b](https://github.com/voxpelli/markdown-or-chalk/commit/8eeb76b8d287bfeafd422e66d467368c469abfcf))
 
 ## [0.3.0](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.3...v0.3.0) (2026-07-27)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -28,7 +25,6 @@
 * expanded ANSI handlers in fromMdast() ([58b73f9](https://github.com/voxpelli/markdown-or-chalk/commit/58b73f9b2ff4e290887c84d2d5488be706691791))
 * refactor #useMarkdown boolean to #mode string enum ([891ee1d](https://github.com/voxpelli/markdown-or-chalk/commit/891ee1d521816f6d9568f6fb983a0dd7bb21902e))
 
-
 ### 🩹 Fixes
 
 * a type that ts 7 complains about ([88255b0](https://github.com/voxpelli/markdown-or-chalk/commit/88255b04b8daee293066a58a7bc542748cba09fd))
@@ -39,13 +35,11 @@
 * resolve TS2345 circular reference type error with MdastFormat typedef ([3d8f2a5](https://github.com/voxpelli/markdown-or-chalk/commit/3d8f2a5d36a918fb165cbf79f703595b1db86573))
 * update package.json description, URLs, and keywords ([fb48df1](https://github.com/voxpelli/markdown-or-chalk/commit/fb48df1c3ec860801dda917134dff0eb6ec0c08a))
 
-
 ### 📚 Documentation
 
 * improved and expanded documentation / README ([a3351cd](https://github.com/voxpelli/markdown-or-chalk/commit/a3351cdd19603644ab4c0769292aee26f96d0039))
 * **readme:** add `@voxpelli/pretty-ts-errors-cli` ([79e1f4c](https://github.com/voxpelli/markdown-or-chalk/commit/79e1f4ce87400859fd5aed536f520546b7815ca8))
 * **readme:** fix example ([7c0bc1d](https://github.com/voxpelli/markdown-or-chalk/commit/7c0bc1d2343bdd25e4ce519d301865b053e61df1))
-
 
 ### 🧹 Chores
 
@@ -55,8 +49,8 @@
 * **deps:** lock file maintenance ([#22](https://github.com/voxpelli/markdown-or-chalk/issues/22)) ([02d9bd1](https://github.com/voxpelli/markdown-or-chalk/commit/02d9bd146829f88d424cdb70358a64e984266937))
 * **deps:** lockfile maintenance ([f0b7d85](https://github.com/voxpelli/markdown-or-chalk/commit/f0b7d852cd2cdfa57893fd6630d4f54cae6d5780))
 * **deps:** update dependency npm-run-all2 to v9 ([#38](https://github.com/voxpelli/markdown-or-chalk/issues/38)) ([3de52dd](https://github.com/voxpelli/markdown-or-chalk/commit/3de52ddea91a5fb11f3b37b33afe905a1d234e8d))
-* **deps:** update dependency typescript to ~5.6.3 ([#26](https://github.com/voxpelli/markdown-or-chalk/issues/26)) ([8e0d579](https://github.com/voxpelli/markdown-or-chalk/commit/8e0d5793c269095928082f99e032900e0cad5cdd))
-* **deps:** update dependency typescript to ~6.0.3 ([#33](https://github.com/voxpelli/markdown-or-chalk/issues/33)) ([557f262](https://github.com/voxpelli/markdown-or-chalk/commit/557f262706e8b7b587935af78a40ccce47b157b3))
+* **deps:** update dependency typescript to \~5.6.3 ([#26](https://github.com/voxpelli/markdown-or-chalk/issues/26)) ([8e0d579](https://github.com/voxpelli/markdown-or-chalk/commit/8e0d5793c269095928082f99e032900e0cad5cdd))
+* **deps:** update dependency typescript to \~6.0.3 ([#33](https://github.com/voxpelli/markdown-or-chalk/issues/33)) ([557f262](https://github.com/voxpelli/markdown-or-chalk/commit/557f262706e8b7b587935af78a40ccce47b157b3))
 * **deps:** update dev dependencies ([e7ee7cd](https://github.com/voxpelli/markdown-or-chalk/commit/e7ee7cd523915d81973b68f59460fad05584ea41))
 * **deps:** update test dependencies ([#31](https://github.com/voxpelli/markdown-or-chalk/issues/31)) ([b33e60d](https://github.com/voxpelli/markdown-or-chalk/commit/b33e60d14f4d3fdc1a7f858d1d016ccd164d7533))
 * improve + fix tests ([5ca7655](https://github.com/voxpelli/markdown-or-chalk/commit/5ca76557f0c034cbfb40aecf152e552e7a2ada72))
@@ -67,11 +61,9 @@
 
 ## [0.2.3](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.2...v0.2.3) (2024-09-12)
 
-
 ### 🌟 Features
 
 * add support for code blocks in CLI output ([593c91d](https://github.com/voxpelli/markdown-or-chalk/commit/593c91d1829fa672085404191a08c9e23e628ac3))
-
 
 ### 🧹 Chores
 
@@ -80,11 +72,9 @@
 
 ## [0.2.2](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.1...v0.2.2) (2024-09-09)
 
-
 ### 🌟 Features
 
 * export `Table` type ([58115e9](https://github.com/voxpelli/markdown-or-chalk/commit/58115e920c664d12444da261c01d39f05ad4432c))
-
 
 ### 🧹 Chores
 
@@ -97,7 +87,6 @@
 * **deps:** update type dependencies ([#15](https://github.com/voxpelli/markdown-or-chalk/issues/15)) ([3380987](https://github.com/voxpelli/markdown-or-chalk/commit/3380987f7df6119f9cfe29a42ba0198dbc5575ce))
 
 ## [0.2.1](https://github.com/voxpelli/markdown-or-chalk/compare/v0.2.0...v0.2.1) (2024-06-25)
-
 
 ### 🧹 Chores
 

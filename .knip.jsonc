@@ -4,5 +4,11 @@
     "index.js",
     "index.d.ts"
   ],
-  "ignoreDependencies": ["@voxpelli/ast-grep-rules"]
+  "ignoreDependencies": [
+    "@voxpelli/ast-grep-rules",
+    "@voxpelli/remark-preset"
+  ],
+  "ignoreUnresolved": [
+    "remark-@voxpelli/remark-preset"
+  ]
 }
