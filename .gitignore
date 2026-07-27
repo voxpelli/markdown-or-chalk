@@ -9,8 +9,8 @@
 /yarn.lock
 
 # Generated types
-*.d.ts
-*.d.ts.map
+*.d.*ts
+*.d.*ts.map
 !/lib/**/*-types.d.ts
 !/index.d.ts
 
