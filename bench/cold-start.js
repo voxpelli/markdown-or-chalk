@@ -20,7 +20,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const STYLES = ['markdown', 'text', 'html', 'ansi', 'chalk', 'ansi-rich'];
-const DEPENDENCIES = ['cli-highlight', 'boxen', 'chalk', 'terminal-link', 'get-east-asian-width'];
+const DEPENDENCIES = ['emphasize', 'boxen', 'chalk', 'terminal-link', 'get-east-asian-width'];
 const RUNS = 5;
 
 const [mode, target] = process.argv.slice(2);

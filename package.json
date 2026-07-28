@@ -65,7 +65,7 @@
     "@types/mdast": "^4.0.3",
     "boxen": "^8.0.1",
     "chalk": "^6.0.0",
-    "cli-highlight": "^2.1.11",
+    "emphasize": "^7.0.0",
     "get-east-asian-width": "^1.6.0",
     "is-unicode-supported": "^2.0.0",
     "mdast-util-gfm-footnote": "^2.1.0",

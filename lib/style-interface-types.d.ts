@@ -48,7 +48,7 @@ export interface AnsiStyledOutput extends StyledOutputInterface {
   type: 'ansi';
 }
 
-/** `ansi` plus boxed, syntax-highlighted code blocks — loads boxen + cli-highlight */
+/** `ansi` plus boxed, syntax-highlighted code blocks — loads boxen + emphasize */
 export interface AnsiRichStyledOutput extends StyledOutputInterface {
   type: 'ansi-rich';
 }
