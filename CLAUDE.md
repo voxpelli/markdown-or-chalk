@@ -20,8 +20,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Testing
 
 * Tests use `node:test` + `node:assert/strict`, c8 for coverage
-* Use `forceColor('0')` from test/force-color.js in before/after hooks when testing ansi — `styleText` re-reads `FORCE_COLOR` per call, so it works after import and also reaches nested dependencies
+* Use `forceColor('0')` from test/force-color.js in before/after hooks when testing ansi — `styleText` re-reads `FORCE_COLOR` per call, so it works after import
+* **`FORCE_COLOR` in the environment proves nothing about the suite.** Most spec files set it themselves in a `before` hook, and Node gives `FORCE_COLOR` absolute priority over `NO_COLOR`, so an outer `FORCE_COLOR=3` or `NO_COLOR=1` is clobbered for every colour-sensitive file. A test that means to assert about colour has to force it itself
 * test/ansi-golden.spec.js pins escape-sequence output at a _forced_ colour level — the rest of the suite runs with colour off, where changes to escape handling are invisible
+* Assert escape-_absence_ at forced colour **on**, never off: with colour off the styles emit no escapes at all, so the assertion passes for the wrong reason (test/sanitizing.spec.js does this)
 * `ensurePhrasingContentList` is exported from index.js — it turns the string form of `logSymbolsMdast` into real mdast nodes
 * Test glob: `test/**/*.spec.js` — supports multiple spec files
 
@@ -61,15 +63,27 @@ A genuinely unknown mdast node type still throws: `mdast-util-to-markdown` hardc
 
 ### Shared mdast handlers (lib/mdast-handlers.js)
 
-The ansi/text handler set covers `text`, `code`, `inlineCode`, `link`, `image`, `break`, `heading`, `emphasis`, `strong`, `blockquote`, `delete`, `thematicBreak`, `list` and (ansi only) `ansiTextElement`. Anything else falls through to default `mdast-util-to-markdown` serialization, which may leak markdown syntax into terminal output.
+The ansi/text handler set covers `text`, `code`, `inlineCode`, `link`, `image`, `break`, `heading`, `emphasis`, `strong`, `blockquote`, `delete`, `thematicBreak`, `list`, the three reference nodes (`linkReference`, `imageReference`, `definition`) and (ansi only) `ansiTextElement`. Anything else falls through to default `mdast-util-to-markdown` serialization, which may leak markdown syntax into terminal output — which is exactly what the reference nodes did until they got handlers, and they are what `remark-parse` emits for `[a][b]`.
 
-**Table cells are escaped per handler, not once.** `mdast-util-gfm-table` calls its own `handleTableCell` directly from `handleTableRowAsData` rather than through `state.handle`, so a `tableCell` entry in `options.handlers` is never reached — every handler that can land in a cell must call `escapeInCell()` itself. Overriding `inlineCode` without doing so silently drops the extension's own pipe escaping.
+**Table cells are escaped per handler, not once.** `mdast-util-gfm-table` calls its own `handleTableCell` directly from `handleTableRowAsData` rather than through `state.handle`, so a `tableCell` entry in `options.handlers` is never reached — every handler that can land in a cell must call `escapeInCell()` itself. Overriding `inlineCode` without doing so silently drops the extension's own pipe escaping, and a node type with _no_ handler escapes the rule entirely: an unhandled `linkReference` whose identifier held a `|` used to add a column to its row.
 
-Escaping is ANSI-aware (`mapVisibleText`, lib/utils/ansi.js) so a pipe inside an OSC 8 hyperlink URL is not escaped like a visible one. That helper deliberately does not use `ansi-regex`'s pattern, whose OSC payload class excludes `|`.
+Escaping is ANSI-aware (`mapVisibleText`, lib/utils/ansi.js) so a pipe inside an OSC 8 hyperlink URL is not escaped like a visible one. That helper deliberately does not use `ansi-regex`'s pattern, whose OSC payload class excludes `|`. It narrows the general grammar in two places, both because a character wrongly counted as part of an escape is a character `escapeInCell` never escapes: `\` and `|` are cut from the CSI final-byte class, and a lone introducer matches as a one-character sequence so an unterminated OSC cannot swallow the rest of the string.
+
+### Escapes are data, not markup
+
+Caller-supplied literals — `text`, `html`, `code` and `inlineCode` values, alt texts, footnote identifiers — go through `literal()` (lib/mdast-handlers.js), which strips escape sequences. `ansiTextElement` is the _only_ sanctioned way to embed pre-formatted ANSI, which is what makes a `text` node carrying escapes a hole rather than a feature: `text` promises output safe for a log file, and a raw `ESC[2J` in either style clears the reader's screen.
+
+Strip on the way **in**, never on the finished string: stripping has to land before `escapeInCell`, or a pipe hidden inside an OSC payload reads as invisible and its row silently gains a column.
 
 ### URL safety
 
-`filterHyperlinkUrl` (lib/utils/url.js) strips control characters (prevents OSC 8 ANSI injection) **before** blocking dangerous protocols (`javascript:`, `vbscript:`, `data:`) via WHATWG `URL` parsing. Keep that order — WHATWG parsers strip tab/newline themselves, so a protocol check on the unstripped string is bypassable.
+`filterHyperlinkUrl` (lib/utils/url.js) strips C0/C1/DEL controls (prevents OSC 8 ANSI injection) **before** checking the scheme against an allowlist. Keep that order — a control character inside `java\tscript:` would otherwise hide the scheme from the check while a consumer still resolves it.
+
+**The scheme is read off the string, not out of `new URL().protocol`.** WHATWG parsing is much stricter than what actually dispatches a URL: it rejects `ssh://host:99999999/x` and `x-man-page://[ls` over an out-of-range port and a forbidden host character, while `open` / `xdg-open` / `ShellExecute` — what a terminal hands an OSC 8 link to — take both. Treating a parse failure as "relative, therefore safe" gave every blocked scheme a one-character bypass, the two iTerm2 CVEs the allowlist exists for included.
+
+The list is an allowlist for the same reason: any scheme an installed application registered is reachable, so there is no denylist that could be complete.
+
+**The markdown style deliberately does not filter URLs in `fromMdast()`** — only its `hyperlink()` string method does. Its job is faithful serialization for a downstream renderer that sanitizes in turn, and rewriting URLs mid-serialization would break round-tripping. The other four styles _are_ the final renderer, so they filter.
 
 ### Exported helpers
 

@@ -60,6 +60,14 @@ format.fromMdast({ type: 'heading', depth: 1, children: [{ type: 'text', value: 
 // '=== Wow ===\n'
 ```
 
+`fromMdast()` honours overrides in `'ansi'`, `'ansi-rich'`, `'html'` and
+`'text'`. `'markdown'` is the exception: it serializes stock, so that its output
+stays valid markdown rather than whatever a caller substituted. Overrides still
+apply when you call its string methods directly.
+
+An override is read off `this`, so it has to stay attached to the styler —
+`const { fromMdast } = format` renders with the base style, not with yours.
+
 ### `getMdastOutputter(style)`
 
 Returns only the `fromMdast` renderer function for the selected style.
