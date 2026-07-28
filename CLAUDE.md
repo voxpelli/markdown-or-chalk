@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 * Tests use `node:test` + `node:assert/strict`, c8 for coverage
 * Use `chalk.level = 0` in before/after hooks when testing ansi/chalk mode — enables exact string assertions
-* `ensurePhrasingContentList` is not exported from index.js — import directly from `lib/utils/mdast-helpers.js` for testing
+* `ensurePhrasingContentList` is exported from index.js — it turns the string form of `logSymbolsMdast` into real mdast nodes
 * Test glob: `test/**/*.spec.js` — supports multiple spec files
 
 ## Architecture
@@ -38,8 +38,12 @@ lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let markdown
 
 For complex output (tables, code blocks, links), the library builds **mdast syntax trees** and serializes them via `mdast-util-to-markdown`:
 
-* **Markdown mode** (lib/styles/markdown.js): standard serialization with the GFM table + strikethrough extensions
+* **Markdown mode** (lib/styles/markdown.js): standard serialization with the GFM footnote + strikethrough + table + task-list extensions
 * **ANSI mode**: `mdastToMarkdownAnsiOptions()` (lib/mdast-ansi.js) supplies custom handlers that convert mdast nodes to chalk-styled strings (boxen for code blocks, cli-highlight for syntax highlighting, terminal-link for hyperlinks)
+
+Options are resolved **per styler** and memoized in a `WeakMap`, and `fromMdast`/`table` read `this`, so a customized copy (`{ ...getOutputStyler('ansi'), header }`) has its overrides honored by its own rendering. Detached use (`getMdastOutputter()`, destructuring) falls back to the base styler.
+
+A genuinely unknown mdast node type still throws: `mdast-util-to-markdown` hardcodes zwitch's `unknown` handler and it is not configurable via `options.handlers`.
 
 ### Custom mdast node
 

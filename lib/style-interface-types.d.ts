@@ -15,10 +15,14 @@ interface LogSymbolStylingInterface {
 
 interface MdastStylingInterface {
   fromMdast: FromMdast;
+  /**
+   * `align` and `tablePipeAlign` are markdown-only — the terminal styles ignore
+   * them, since `:---` / `---:` markers are markdown syntax rather than output.
+   */
   table(rows: PhrasingContentOrStringList[][], align?: AlignType[], options?: { tablePipeAlign?: boolean; }): string;
 }
 
-interface TextStylingInterface {
+export interface TextStylingInterface {
   bold: (text: string) => string;
   dim: (text: string) => string;
   header: (text: string, level?: number) => string;
@@ -29,8 +33,9 @@ interface TextStylingInterface {
 
 // *** Main base interface ***
 
-interface StyledOutputInterface extends LogSymbolStylingInterface, MdastStylingInterface, TextStylingInterface {
-  type: string;
+export interface StyledOutputInterface extends LogSymbolStylingInterface, MdastStylingInterface, TextStylingInterface {
+  /** Narrowed to a literal by each implementing style — the registry keys on it */
+  type: StyledOutputTypes;
   code(text: string): string;
   indent(text: string, level?: number): string;
   json(value: unknown): string;
