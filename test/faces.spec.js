@@ -163,6 +163,15 @@ const renderImage = url => getMdastOutputter('html')({
   children: [{ type: 'image', url, alt: 'a' }],
 });
 
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+const renderText = value => getMdastOutputter('html')({
+  type: 'paragraph',
+  children: [{ type: 'text', value }],
+});
+
 describe('html style', () => {
   /** @type {AnyStyledOutput} */
   let moc;
@@ -188,13 +197,16 @@ describe('html style', () => {
   });
 
   it('should escape text nodes rendered through fromMdast', () => {
-    const result = getMdastOutputter('html')({
-      type: 'paragraph',
-      children: [{ type: 'text', value: '<script>alert(1)</script>' }],
-    });
-
-    assert.equal(result, '<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>\n');
-    assert.doesNotMatch(result, /<script>/);
+    // Asserted as exact output per casing rather than against a tag pattern.
+    // `escapeHtml` works on the characters, so a `/<script>/` assertion would be
+    // both weaker than the guarantee it is checking and blind to `<SCRIPT>` —
+    // which is exactly what CodeQL's bad-tag-filter query flags a regexp for
+    for (const tag of ['script', 'SCRIPT', 'ScRiPt']) {
+      assert.equal(
+        renderText(`<${tag}>alert(1)</${tag}>`),
+        `<p>&lt;${tag}&gt;alert(1)&lt;/${tag}&gt;</p>\n`
+      );
+    }
   });
 
   it('should block dangerous urls in links', () => {
