@@ -99,7 +99,7 @@ describe('style contract', () => {
 
     for (const [name, node] of Object.entries(SHARED_CONSTRUCTS)) {
       it(`should render ${name} in every style`, () => {
-        for (const style of /** @type {const} */ (['markdown', 'ansi', 'chalk'])) {
+        for (const style of /** @type {const} */ (['markdown', 'ansi', 'chalk', 'html', 'text'])) {
           assert.doesNotThrow(
             () => getMdastOutputter(style)(/** @type {any} */ (node)),
             `${name} should render in the ${style} style`

@@ -34,6 +34,27 @@ Returns a formatter for one of these styles:
 * `'markdown'` – Markdown output
 * `'ansi'` – ANSI terminal output
 * `'chalk'` – Chalk-flavored terminal output (legacy compatibility; prefer `'ansi'`)
+* `'html'` – Semantic HTML, with no classes or inline styles
+* `'text'` – Plain text, with no ANSI and no markup — for pipes, log files and `NO_COLOR`
+
+Unknown styles throw a `TypeError`.
+
+### Customizing a style
+
+Every style is a plain frozen object, so a copy with overrides works — including
+inside `fromMdast()`:
+
+```javascript
+import { getOutputStyler } from 'markdown-or-chalk';
+
+const format = {
+  ...getOutputStyler('ansi'),
+  header: text => `=== ${text} ===`,
+};
+
+format.fromMdast({ type: 'heading', depth: 1, children: [{ type: 'text', value: 'Wow' }] });
+// '=== Wow ===\n'
+```
 
 ### `getMdastOutputter(style)`
 
@@ -60,7 +81,7 @@ Returns only the `fromMdast` renderer function for the selected style.
 
 | Getter            | Returns                                                       |
 | ----------------- | ------------------------------------------------------------- |
-| `type`            | `'markdown'`, `'ansi'`, or `'chalk'`                          |
+| `type`            | `'markdown'`, `'ansi'`, `'chalk'`, `'html'` or `'text'`       |
 | `logSymbols`      | `{info, success, warning, error}` — emoji or styled symbols   |
 | `logSymbolsMdast` | `{info, success, warning, error}` — mdast-compatible symbols  |
 | `chalk`           | `ChalkInstance` in chalk mode (`deprecated`, prefer `'ansi'`) |
@@ -69,9 +90,10 @@ Returns only the `fromMdast` renderer function for the selected style.
 
 | Helper                                 | Description                      |
 | -------------------------------------- | -------------------------------- |
-| `mdastTableHelper(rows, align?)`       | Build an mdast Table node        |
-| `mdastListHelper(items)`               | Build an mdast List node         |
-| `mdastLinkify(value, url, skipLinks?)` | Build an mdast Link or Text node |
+| `mdastTableHelper(rows, align?)`       | Build an mdast Table node                       |
+| `mdastListHelper(items)`               | Build an mdast List node                        |
+| `mdastLinkify(value, url, skipLinks?)` | Build an mdast Link or Text node                |
+| `ensurePhrasingContentList(list)`      | Turn strings into mdast Text nodes for a tree   |
 
 ### Advanced: mdast helpers
 

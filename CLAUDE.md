@@ -30,7 +30,9 @@ This is a dual-output formatting library: given the same API calls, it produces 
 
 ### Core pattern
 
-`getOutputStyler(style)` (lib/main.cjs) returns one of three frozen style objects — `'markdown'`, `'ansi'` or `'chalk'` (ansi plus a deprecated `chalk` getter) — implemented in lib/styles/{markdown,ansi,chalk}.js. All implement the shared interface in lib/style-interface-types.d.ts. Unknown styles throw a `TypeError`. `getMdastOutputter(style)` returns just the selected style's `fromMdast`.
+`getOutputStyler(style)` (lib/main.cjs) returns one of five frozen style objects — `'markdown'`, `'ansi'`, `'chalk'` (ansi plus a deprecated `chalk` getter), `'html'` and `'text'` — implemented in lib/styles/. All implement the shared interface in lib/style-interface-types.d.ts. Unknown styles throw a `TypeError`. `getMdastOutputter(style)` returns just the selected style's `fromMdast`.
+
+The `ansi` and `text` styles share their mdast handlers via `buildStyleOptions()` (lib/mdast-handlers.js) — they differ in decoration, not structure, so each supplies only its own `codeBlock` / `inlineCode` / `quoteLine` / `thematicBreak` renderers. `html` has its own handler set because nested tags are a genuinely different shape, and it emits **no classes or inline styles** (the one exception being the conventional `language-*` class on code blocks).
 
 lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let markdown-only consumers avoid loading chalk/boxen/cli-highlight. It is the only CJS file in the package; everything else is ESM.
 

@@ -59,10 +59,22 @@ export interface MarkdownStyledOutput extends StyledOutputInterface {
   type: 'markdown';
 }
 
+/** Semantic HTML — no classes or inline styles, consumers bring their own CSS */
+export interface HtmlStyledOutput extends StyledOutputInterface {
+  type: 'html';
+}
+
+/** No ANSI and no markup — for pipes, log files and `NO_COLOR` */
+export interface TextStyledOutput extends StyledOutputInterface {
+  type: 'text';
+}
+
 // *** Unions for implemented styles ***
 
 export type AnyStyledOutput =
   AnsiStyledOutput |
   ChalkStyledOutput |
-  MarkdownStyledOutput;
+  HtmlStyledOutput |
+  MarkdownStyledOutput |
+  TextStyledOutput;
 export type StyledOutputTypes = AnyStyledOutput['type'];
