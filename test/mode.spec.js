@@ -38,6 +38,22 @@ describe('mode selector', () => {
     assert.throws(() => getOutputStyler('nope'), { name: 'TypeError', message: /'nope'/ });
   });
 
+  it('inherited Object.prototype members do not satisfy the guard', () => {
+    for (const key of ['toString', 'constructor', 'valueOf', 'hasOwnProperty', '__proto__']) {
+      // @ts-expect-error -- testing invalid input
+      assert.throws(() => getOutputStyler(key), { name: 'TypeError' }, `getOutputStyler(${key})`);
+      // @ts-expect-error -- testing invalid input
+      assert.throws(() => getMdastOutputter(key), { name: 'TypeError' }, `getMdastOutputter(${key})`);
+    }
+  });
+
+  it('log symbols are frozen so one consumer cannot corrupt them', () => {
+    for (const style of /** @type {const} */ (['markdown', 'ansi', 'chalk', 'html', 'text', 'ansi-rich'])) {
+      assert.ok(Object.isFrozen(getOutputStyler(style).logSymbols), `${style} logSymbols`);
+      assert.ok(Object.isFrozen(getOutputStyler(style).logSymbolsMdast), `${style} logSymbolsMdast`);
+    }
+  });
+
   it('legacy boolean style throws a TypeError', () => {
     // @ts-expect-error -- testing the old MarkdownOrChalk boolean argument
     assert.throws(() => getOutputStyler(true), { name: 'TypeError', message: /boolean/ });

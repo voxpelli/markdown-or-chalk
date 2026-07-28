@@ -229,6 +229,57 @@ describe('html style', () => {
     assert.match(result, /<ol start="3">/);
   });
 
+  it('should honour styler overrides in fromMdast', () => {
+    const custom = {
+      ...getOutputStyler('html'),
+      header: (/** @type {string} */ text) => `>>>${text}<<<`,
+      bold: (/** @type {string} */ text) => `B(${text})`,
+    };
+
+    assert.equal(
+      custom.fromMdast({ type: 'heading', depth: 1, children: [{ type: 'text', value: 'Hi' }] }),
+      '>>>Hi<<<\n'
+    );
+    assert.equal(
+      custom.fromMdast({ type: 'paragraph', children: [{ type: 'strong', children: [{ type: 'text', value: 'b' }] }] }),
+      '<p>B(b)</p>\n'
+    );
+  });
+
+  it('should keep nested markup inside link text', () => {
+    const result = getMdastOutputter('html')({
+      type: 'paragraph',
+      children: [{
+        type: 'link',
+        url: 'https://e.com/',
+        children: [{ type: 'strong', children: [{ type: 'text', value: 'bold' }] }, { type: 'text', value: ' link' }],
+      }],
+    });
+
+    assert.equal(result, '<p><a href="https://e.com/"><strong>bold</strong> link</a></p>\n');
+  });
+
+  it('should not leak markdown syntax from reference-style links', () => {
+    const result = getMdastOutputter('html')({
+      type: 'root',
+      children: [
+        { type: 'paragraph', children: [{ type: 'linkReference', identifier: 'x', referenceType: 'full', children: [{ type: 'text', value: 'click' }] }] },
+        { type: 'definition', identifier: 'x', url: 'https://e.com/' },
+      ],
+    });
+
+    assert.doesNotMatch(result, /\[click\]/);
+    assert.doesNotMatch(result, /^\[x\]:/m);
+    assert.match(result, /click/);
+  });
+
+  it('should use unicode log symbols regardless of the terminal', () => {
+    // is-unicode-supported probes TERM — meaningless for a browser document
+    assert.deepEqual(moc.logSymbols, {
+      info: 'ℹ', success: '✔', warning: '⚠', error: '✖',
+    });
+  });
+
   it('should render a table with a head and a body', () => {
     const result = moc.table([[['H']], [['c']]]);
 
