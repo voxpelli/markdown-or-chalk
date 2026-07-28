@@ -18,7 +18,7 @@ import { getOutputStyler } from 'markdown-or-chalk';
 
 const printAsMarkdown = true;
 
-const format = getOutputStyler(printAsMarkdown);
+const format = getOutputStyler(printAsMarkdown ? 'markdown' : 'ansi');
 
 format.header('Wow');
 ```
@@ -53,7 +53,7 @@ Returns only the `fromMdast` renderer function for the selected style.
 | `list(items)`                    | Bullet list. Markdown: `* item`. Terminal: `- item`                                                                                  |
 | `indent(text, level?)`           | Indent by level × 2 spaces (default level is 1)                                                                                      |
 | `json(value)`                    | JSON output. Markdown: fenced code block. Terminal: plain JSON                                                                       |
-| `table(rows, align?, options?)`  | Table. Markdown: GFM table (supports `{ tablePipeAlign?: boolean }`). Terminal: aligned columns                                      |
+| `table(rows, align?, options?)`  | Table. Markdown: GFM table (supports `{ tablePipeAlign?: boolean }`). Terminal: aligned columns (`align` is markdown-only)           |
 | `fromMdast(node, options?)`      | Render any mdast node to string                                                                                                      |
 
 ### Getters
@@ -135,9 +135,9 @@ const output = fromMdast(node);
 ### Migration checklist
 
 * Replace constructor usage with `getOutputStyler()` / `getMdastOutputter()`.
-* Replace boolean mode selection with explicit style strings.
+* Replace boolean mode selection with explicit style strings — unknown styles (including booleans) throw a `TypeError`.
 * If branching by mode, check `.type`.
-* Keep `.chalk` usage only for legacy paths.
+* Keep `.chalk` usage only for legacy paths — it requires the `'chalk'` style, the `'ansi'` style has no `.chalk` getter.
 * Re-check output-sensitive behavior:
   * `hyperlink()` in markdown mode
   * `list()` formatting
