@@ -10,6 +10,7 @@ import { getOutputStyler, mdastTableHelper } from '../index.js';
 /** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
 /** @import { Emphasis, TableCell, TableRow } from 'mdast' */
+/** @import { PhrasingContentOrString } from '../index.js' */
 
 describe('table', () => {
   describe('mdastTableHelper', () => {
@@ -181,6 +182,33 @@ describe('table', () => {
       // Every row has the same number of unescaped column separators
       const separators = result.trim().split('\n').map(line => line.split(/(?<!\\)\|/).length);
       assert.equal(new Set(separators).size, 1);
+    });
+
+    it('should escape a backslash before a pipe, not just the pipe', () => {
+      // Without escaping the backslash the row gains an unescaped delimiter
+      const result = moc.table([[[String.raw`a\|b`]], [['c']]]);
+
+      assert.ok(result.includes(String.raw`a\\\|b`), result);
+    });
+
+    it('should keep a newline in a cell from splitting the row', () => {
+      const result = moc.table([[['x\ny']], [['c']]]);
+
+      assert.equal(result.trim().split('\n').length, 3);
+    });
+
+    it('should escape pipes reaching a cell from any node type', () => {
+      /** @type {PhrasingContentOrString[]} */
+      const nodes = [
+        { type: 'inlineCode', value: 'x|y' },
+        { type: 'ansiTextElement', value: 'x|y' },
+      ];
+
+      for (const node of nodes) {
+        const result = moc.table([[[node]], [['c']]]);
+
+        assert.ok(result.includes(String.raw`x\|y`), result);
+      }
     });
 
     it('should not pass align to mdast in chalk mode', () => {

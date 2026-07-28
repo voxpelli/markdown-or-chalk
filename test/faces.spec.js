@@ -1,9 +1,28 @@
 import assert from 'node:assert/strict';
-import { before, describe, it } from 'node:test';
+import {
+  after, before, describe, it,
+} from 'node:test';
+
+import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
 
 import { getMdastOutputter, getOutputStyler } from '../index.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
+/** @import { ColorSupportLevel } from 'chalk' */
+
+/** @type {ColorSupportLevel} */
+let originalLevel;
+
+// Exact string assertions need colour off — see CLAUDE.md
+before(() => {
+  originalLevel = chalk.level;
+  chalk.level = /** @type {ColorSupportLevel} */ (0);
+});
+
+after(() => {
+  chalk.level = originalLevel;
+});
 
 describe('text style', () => {
   /** @type {AnyStyledOutput} */
@@ -53,6 +72,53 @@ describe('text style', () => {
   });
 });
 
+describe('terminal and plain shared handlers', () => {
+  for (const style of /** @type {const} */ (['ansi', 'text'])) {
+    describe(`${style} style`, () => {
+      it('should render a break as a newline, not a trailing backslash', () => {
+        const result = getMdastOutputter(style)({
+          type: 'paragraph',
+          children: [{ type: 'text', value: 'a' }, { type: 'break' }, { type: 'text', value: 'b' }],
+        });
+
+        assert.equal(result, 'a\nb\n');
+      });
+
+      it('should render an image without markdown syntax', () => {
+        const result = getMdastOutputter(style)({
+          type: 'paragraph',
+          children: [{ type: 'image', url: 'https://e.com/a.png', alt: 'pic' }],
+        });
+
+        assert.match(result, /pic/);
+        assert.doesNotMatch(result, /!\[/);
+      });
+
+      it('should not put a stray blank line before a code block', () => {
+        const result = getMdastOutputter(style)({
+          type: 'list',
+          ordered: false,
+          children: [{
+            type: 'listItem',
+            children: [
+              { type: 'paragraph', children: [{ type: 'text', value: 'item' }] },
+              { type: 'code', value: 'const a = 1;' },
+            ],
+          }],
+        });
+
+        assert.doesNotMatch(result, /\n\n\n/);
+      });
+
+      it('should not leave trailing whitespace on blank lines in a code block', () => {
+        const result = getMdastOutputter(style)({ type: 'code', value: 'a\n\nb' });
+
+        assert.doesNotMatch(result, / +\n/);
+      });
+    });
+  }
+});
+
 describe('ansi-rich style', () => {
   /** @type {AnyStyledOutput} */
   let moc;
@@ -66,7 +132,9 @@ describe('ansi-rich style', () => {
   });
 
   it('should box a code block and title it with the language', () => {
-    const result = moc.fromMdast({ type: 'code', lang: 'js', value: 'const x = 1;' });
+    // Stripped rather than relying on chalk.level: cli-highlight styles through
+    // its own bundled chalk, which this suite's chalk instance cannot reach
+    const result = stripAnsi(moc.fromMdast({ type: 'code', lang: 'js', value: 'const x = 1;' }));
 
     assert.match(result, /const x = 1;/);
     assert.match(result, /js/);
@@ -75,7 +143,7 @@ describe('ansi-rich style', () => {
   });
 
   it('should not crash on an unknown code block language', () => {
-    const result = moc.fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' });
+    const result = stripAnsi(moc.fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' }));
 
     assert.match(result, /plain content/);
   });
