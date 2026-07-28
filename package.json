@@ -63,9 +63,7 @@
   },
   "dependencies": {
     "@types/mdast": "^4.0.3",
-    "boxen": "^8.0.1",
     "chalk": "^6.0.0",
-    "emphasize": "^7.0.0",
     "get-east-asian-width": "^1.6.0",
     "is-unicode-supported": "^2.0.0",
     "mdast-util-gfm-footnote": "^2.1.0",
@@ -83,7 +81,9 @@
     "@voxpelli/eslint-config": "^25.1.0",
     "@voxpelli/remark-preset": "^0.1.1",
     "@voxpelli/tsconfig": "^16.2.1",
+    "boxen": "^8.0.1",
     "c8": "^12.0.0",
+    "emphasize": "^7.0.0",
     "eslint": "^9.39.5",
     "husky": "^9.1.7",
     "installed-check": "^10.0.1",
@@ -99,5 +99,17 @@
     "plugins": [
       "@voxpelli/remark-preset"
     ]
+  },
+  "peerDependencies": {
+    "boxen": "^8.0.1",
+    "emphasize": "^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "boxen": {
+      "optional": true
+    },
+    "emphasize": {
+      "optional": true
+    }
   }
 }
