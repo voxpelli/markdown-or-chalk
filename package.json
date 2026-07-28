@@ -75,7 +75,7 @@
   },
   "devDependencies": {
     "@ast-grep/cli": "^0.44.1",
-    "@types/node": "^22.20.1",
+    "@types/node": "^24.5.0",
     "@voxpelli/ast-grep-rules": "^0.1.0",
     "@voxpelli/eslint-config": "^25.1.0",
     "@voxpelli/remark-preset": "^0.1.1",

@@ -57,6 +57,27 @@ describe('ansi golden output', () => {
     );
   });
 
+  it('should leave an empty string untouched', () => {
+    // chalk returns '' rather than a bare open/close pair
+    assert.equal(moc.dim(''), '');
+  });
+
+  it('should keep a carriage return outside the styled run', () => {
+    // The reset belongs before the CR, not after it
+    assert.equal(
+      readable(moc.dim('a\r\nb')),
+      '<ESC>[2ma<ESC>[22m\r\n<ESC>[2mb<ESC>[22m'
+    );
+  });
+
+  it('should open and close each blank line rather than spanning it', () => {
+    // A single style spanning the newline makes terminals paint to end of line
+    assert.equal(
+      readable(moc.dim('a\n\nb')),
+      '<ESC>[2ma<ESC>[22m\n<ESC>[2m<ESC>[22m\n<ESC>[2mb<ESC>[22m'
+    );
+  });
+
   it('should produce stable emphasis', () => {
     assert.equal(readable(moc.bold('x')), '<ESC>[1mx<ESC>[22m');
     assert.equal(readable(moc.italic('x')), '<ESC>[3mx<ESC>[23m');
