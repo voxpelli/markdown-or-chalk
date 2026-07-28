@@ -6,7 +6,9 @@ import {
 import { getMdastOutputter, getOutputStyler } from '../index.js';
 import { forceColor } from './force-color.js';
 
-const HEADING = /** @type {import('mdast').Heading} */ ({
+/** @import { Heading, Nodes } from 'mdast' */
+
+const HEADING = /** @type {Heading} */ ({
   type: 'heading',
   depth: 1,
   children: [{ type: 'text', value: 'Hi' }],
@@ -88,7 +90,7 @@ describe('style contract', () => {
       it(`should render ${name} in every style`, () => {
         for (const style of /** @type {const} */ (['markdown', 'ansi', 'html', 'text'])) {
           assert.doesNotThrow(
-            () => getMdastOutputter(style)(/** @type {any} */ (node)),
+            () => getMdastOutputter(style)(/** @type {Nodes} */ (node)),
             `${name} should render in the ${style} style`
           );
         }
@@ -98,7 +100,7 @@ describe('style contract', () => {
 
   describe('task lists', () => {
     it('should keep the checkbox state in markdown', () => {
-      const result = getOutputStyler('markdown').fromMdast(/** @type {any} */ ({
+      const result = getOutputStyler('markdown').fromMdast(/** @type {Nodes} */ ({
         type: 'list',
         ordered: false,
         children: [
@@ -112,7 +114,7 @@ describe('style contract', () => {
     });
 
     it('should keep the checkbox state in ansi', () => {
-      const result = getOutputStyler('ansi').fromMdast(/** @type {any} */ ({
+      const result = getOutputStyler('ansi').fromMdast(/** @type {Nodes} */ ({
         type: 'list',
         ordered: false,
         children: [

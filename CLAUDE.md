@@ -20,32 +20,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Testing
 
 * Tests use `node:test` + `node:assert/strict`, c8 for coverage
-* Use `chalk.level = 0` in before/after hooks when testing ansi/chalk mode — enables exact string assertions
+* Use `forceColor('0')` from test/force-color.js in before/after hooks when testing ansi — `styleText` re-reads `FORCE_COLOR` per call, so it works after import and also reaches nested dependencies
+* test/ansi-golden.spec.js pins escape-sequence output at a *forced* colour level — the rest of the suite runs with colour off, where changes to escape handling are invisible
 * `ensurePhrasingContentList` is exported from index.js — it turns the string form of `logSymbolsMdast` into real mdast nodes
 * Test glob: `test/**/*.spec.js` — supports multiple spec files
 
 ## Architecture
 
-This is a dual-output formatting library: given the same API calls, it produces either **Markdown text** or **ANSI/Chalk-styled terminal output**, controlled by a style string.
+This is a multi-output formatting library: given the same API calls, it produces Markdown, ANSI terminal, HTML or plain text output, controlled by a style string.
 
 ### Core pattern
 
-`getOutputStyler(style)` (lib/main.cjs) returns one of five frozen style objects — `'markdown'`, `'ansi'`, `'chalk'` (ansi plus a deprecated `chalk` getter), `'html'` and `'text'` — implemented in lib/styles/. All implement the shared interface in lib/style-interface-types.d.ts. Unknown styles throw a `TypeError`. `getMdastOutputter(style)` returns just the selected style's `fromMdast`.
+`getOutputStyler(style)` (lib/main.cjs) returns one of five frozen style objects — `'markdown'`, `'ansi'`, `'ansi-rich'` (ansi plus boxed, highlighted code blocks), `'html'` and `'text'` — implemented in lib/styles/. All implement the shared interface in lib/style-interface-types.d.ts. Unknown styles throw a `TypeError`. `getMdastOutputter(style)` returns just the selected style's `fromMdast`.
 
 The `ansi` and `text` styles share their mdast handlers via `buildStyleOptions()` (lib/mdast-handlers.js) — they differ in decoration, not structure, so each supplies only its own `codeBlock` / `inlineCode` / `quoteLine` / `thematicBreak` renderers. `html` has its own handler set because nested tags are a genuinely different shape, and it emits **no classes or inline styles** (the one exception being the conventional `language-*` class on code blocks).
 
 lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let a consumer avoid loading the styles it does not select. It is the only CJS file in the package; everything else is ESM.
 
-**Why the CJS exception is still worth its cost** (measured with `npm run bench`, see bench/cold-start.js): lazily, `markdown` costs ~37ms and `ansi` ~60ms; eagerly loading every non-rich style costs ~73ms. So the lazy registry is still a ~2x saving for the common markdown-only case. Going pure ESM with a single eager entry would regress that. Revisit if the numbers change.
+**Why the CJS exception is worth its cost**: it keeps `ansi-rich` — the one style with heavy dependencies — off everyone else's load path, and lets a missing optional peer be caught and reported (`lib/main.cjs`), which a static ESM import could not do.
 
-Heavy dependencies are quarantined in the `ansi-rich` style (~183ms — cli-highlight ~110ms and boxen ~38ms). Plain `ansi` loads neither.
+**Benchmark numbers move with machine load, so compare within one run, never across sessions.** `npm run bench` (bench/cold-start.js) reports two things: per-style cold start, and per-dependency cost *marginal on top of an already-loaded style*. Marginal is the number that matters — measured in isolation, a dependency is charged for every subtree it shares with the style that loads it, which made boxen look ~4x more expensive than it is.
+
+Indicative shape at time of writing: `markdown` ~43ms, `html` ~44ms, `text` ~49ms, `ansi` ~59ms, `ansi-rich` ~210ms. `emphasize` is ~88ms of that premium and `boxen` ~32ms; nothing else exceeds 10ms.
 
 ### mdast integration
 
 For complex output (tables, code blocks, links), the library builds **mdast syntax trees** and serializes them via `mdast-util-to-markdown`:
 
 * **Markdown mode** (lib/styles/markdown.js): standard serialization with the GFM footnote + strikethrough + table + task-list extensions
-* **ANSI mode**: `mdastToMarkdownAnsiOptions()` (lib/mdast-ansi.js) supplies custom handlers that convert mdast nodes to chalk-styled strings (boxen for code blocks, cli-highlight for syntax highlighting, terminal-link for hyperlinks)
+* **ANSI / text**: `buildStyleOptions()` (lib/mdast-handlers.js) supplies the shared handlers; each style passes its own `codeBlock` / `inlineCode` / `quoteLine` / `thematicBreak`. `ansi-rich` (lib/mdast-ansi-rich.js) swaps in boxen + emphasize
+* **HTML**: its own handler set in lib/styles/html.js — nested tags are a different shape from line prefixes
 
 Options are resolved **per styler** and memoized in a `WeakMap`, and `fromMdast`/`table` read `this`, so a customized copy (`{ ...getOutputStyler('ansi'), header }`) has its overrides honored by its own rendering. Detached use (`getMdastOutputter()`, destructuring) falls back to the base styler.
 
@@ -55,9 +59,13 @@ A genuinely unknown mdast node type still throws: `mdast-util-to-markdown` hardc
 
 `AnsiTextElement` (lib/mdast-ansi-types.d.ts) is a custom mdast literal node type used to embed pre-formatted ANSI strings (like log symbols) into the mdast tree so they pass through ANSI serialization untouched. It is ANSI-only — the markdown style has no handler for it.
 
-### ANSI mode mdast handlers (lib/mdast-ansi.js)
+### Shared mdast handlers (lib/mdast-handlers.js)
 
-Only 12 node types have custom ANSI handlers: `text`, `code`, `inlineCode`, `link`, `heading`, `emphasis`, `strong`, `ansiTextElement`, `blockquote`, `delete`, `thematicBreak`, `list`. All other mdast node types fall through to default `mdast-util-to-markdown` serialization, which may produce markdown syntax in terminal output.
+The ansi/text handler set covers `text`, `code`, `inlineCode`, `link`, `image`, `break`, `heading`, `emphasis`, `strong`, `blockquote`, `delete`, `thematicBreak`, `list` and (ansi only) `ansiTextElement`. Anything else falls through to default `mdast-util-to-markdown` serialization, which may leak markdown syntax into terminal output.
+
+**Table cells are escaped per handler, not once.** `mdast-util-gfm-table` calls its own `handleTableCell` directly from `handleTableRowAsData` rather than through `state.handle`, so a `tableCell` entry in `options.handlers` is never reached — every handler that can land in a cell must call `escapeInCell()` itself. Overriding `inlineCode` without doing so silently drops the extension's own pipe escaping.
+
+Escaping is ANSI-aware (`mapVisibleText`, lib/utils/ansi.js) so a pipe inside an OSC 8 hyperlink URL is not escaped like a visible one. That helper deliberately does not use `ansi-regex`'s pattern, whose OSC payload class excludes `|`.
 
 ### URL safety
 
@@ -75,5 +83,4 @@ Only 12 node types have custom ANSI handlers: `text`, `code`, `inlineCode`, `lin
 * Types via JSDoc annotations, checked by `tsc` — no compilation (declaration files are generated for publishing)
 * Conventional commits enforced by husky commit-msg hook (`validate-conventional-commit`)
 * Pre-push hook runs full `npm test`
-* `cli-highlight` is the only CJS runtime dependency — imported via Node.js ESM interop
 * `@types/mdast` is in `dependencies` (not devDependencies) — needed for downstream JSDoc consumers

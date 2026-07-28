@@ -19,6 +19,8 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+/** @import { StyledOutputTypes } from '../index.js' */
+
 const STYLES = ['markdown', 'text', 'html', 'ansi', 'ansi-rich'];
 const DEPENDENCIES = ['emphasize', 'boxen', 'terminal-link', 'get-east-asian-width'];
 const RUNS = 5;
@@ -53,7 +55,7 @@ const ms = value => value.toFixed(1).padStart(9);
 if (mode === 'style') {
   const started = performance.now();
   const { getOutputStyler } = await import('../index.js');
-  const styler = getOutputStyler(/** @type {any} */ (target));
+  const styler = getOutputStyler(/** @type {StyledOutputTypes} */ (target));
 
   // Touch fromMdast so lazily-built serializer options are included
   styler.fromMdast({ type: 'paragraph', children: [{ type: 'text', value: 'x' }] });
