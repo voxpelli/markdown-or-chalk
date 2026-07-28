@@ -1,6 +1,6 @@
 # Markdown or Chalk
 
-Print through a single interface as Markdown or terminal output (`ansi` / `chalk`).
+Print through a single interface as Markdown, terminal, HTML or plain text output.
 
 [![npm version](https://img.shields.io/npm/v/markdown-or-chalk.svg?style=flat)](https://www.npmjs.com/package/markdown-or-chalk)
 [![npm downloads](https://img.shields.io/npm/dm/markdown-or-chalk.svg?style=flat)](https://www.npmjs.com/package/markdown-or-chalk)
@@ -33,16 +33,15 @@ Returns a formatter for one of these styles:
 
 * `'markdown'` – Markdown output
 * `'ansi'` – ANSI terminal output
-* `'chalk'` – Chalk-flavored terminal output (legacy compatibility; prefer `'ansi'`)
 * `'html'` – Semantic HTML, with no classes or inline styles
 * `'text'` – Plain text, with no ANSI and no markup — for pipes, log files and `NO_COLOR`
 * `'ansi-rich'` – `'ansi'` plus boxed, syntax-highlighted code blocks
 
 Unknown styles throw a `TypeError`.
 
-Only `'ansi-rich'` loads `boxen` and `cli-highlight`, which together cost more
-to load than the rest of the package combined — plain `'ansi'` renders code
-blocks with a dim rule instead. Run `npm run bench` to see the numbers.
+Only `'ansi-rich'` loads `boxen` and `emphasize`, and both are **optional peer
+dependencies** — install them yourself if you select that style. Plain `'ansi'`
+renders code blocks with a dim rule instead. Run `npm run bench` for the numbers.
 
 ### Customizing a style
 
@@ -89,7 +88,6 @@ Returns only the `fromMdast` renderer function for the selected style.
 | `type`            | the selected style string                                     |
 | `logSymbols`      | `{info, success, warning, error}` — emoji or styled symbols   |
 | `logSymbolsMdast` | `{info, success, warning, error}` — mdast-compatible symbols  |
-| `chalk`           | `ChalkInstance` in chalk mode (`deprecated`, prefer `'ansi'`) |
 
 ### Exported Helpers
 
@@ -126,12 +124,12 @@ console.log(fromMdast(list));
 ### What changed
 
 * Constructor-based usage was replaced with a selector function:
-  * `getOutputStyler('markdown' | 'ansi' | 'chalk')`
-* `getMdastOutputter('markdown' | 'ansi' | 'chalk')` was added as a convenience for mdast-only flows.
+  * `getOutputStyler('markdown' | 'ansi' | 'html' | 'text' | 'ansi-rich')`
+* `getMdastOutputter(style)` was added as a convenience for mdast-only flows.
   * Existing `getOutputStyler(style).fromMdast(node)` usage still works.
-* Style is now selected using explicit string modes (`'markdown'`, `'ansi'`, `'chalk'`).
+* Style is now selected using explicit string modes.
 * `type` is the mode discriminator.
-* `chalk` getter is legacy (`deprecated`) and only relevant in `'chalk'` mode (prefer `'ansi'`).
+* The `'chalk'` style and its `chalk` getter were removed in 0.4.0 — use `'ansi'`, and import `chalk` directly if you need the instance.
 
 ### Before / after
 
@@ -164,7 +162,7 @@ const output = fromMdast(node);
 * Replace constructor usage with `getOutputStyler()` / `getMdastOutputter()`.
 * Replace boolean mode selection with explicit style strings — unknown styles (including booleans) throw a `TypeError`.
 * If branching by mode, check `.type`.
-* Keep `.chalk` usage only for legacy paths — it requires the `'chalk'` style, the `'ansi'` style has no `.chalk` getter.
+* Replace `.chalk` usage with a direct `chalk` import — the `'chalk'` style is gone.
 * Re-check output-sensitive behavior:
   * `hyperlink()` in markdown mode
   * `list()` formatting

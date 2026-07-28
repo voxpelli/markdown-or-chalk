@@ -1,5 +1,3 @@
-// eslint-disable-next-line unicorn/import-style
-import type { ChalkInstance } from 'chalk';
 import type { AlignType } from 'mdast';
 
 import type { LogSymbols, LogSymbolsMdast } from './log-symbols-types.js';
@@ -53,13 +51,6 @@ export interface AnsiRichStyledOutput extends StyledOutputInterface {
   type: 'ansi-rich';
 }
 
-export interface ChalkStyledOutput extends StyledOutputInterface {
-  type: 'chalk';
-
-  /** @deprecated Use generic ansi-style instead */
-  get chalk(): ChalkInstance;
-}
-
 export interface MarkdownStyledOutput extends StyledOutputInterface {
   type: 'markdown';
 }
@@ -79,7 +70,6 @@ export interface TextStyledOutput extends StyledOutputInterface {
 export type AnyStyledOutput =
   AnsiRichStyledOutput |
   AnsiStyledOutput |
-  ChalkStyledOutput |
   HtmlStyledOutput |
   MarkdownStyledOutput |
   TextStyledOutput;

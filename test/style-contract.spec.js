@@ -67,15 +67,6 @@ describe('style contract', () => {
       assert.match(result, /B\(h\)/);
     });
 
-    it('should work for a customized chalk styler', () => {
-      const custom = {
-        ...getOutputStyler('chalk'),
-        header: (/** @type {string} */ text) => `C(${text})`,
-      };
-
-      assert.equal(custom.fromMdast(HEADING), 'C(Hi)\n');
-    });
-
     it('should fall back to the base styler when fromMdast is detached', () => {
       const { fromMdast } = getOutputStyler('ansi');
 
@@ -99,7 +90,7 @@ describe('style contract', () => {
 
     for (const [name, node] of Object.entries(SHARED_CONSTRUCTS)) {
       it(`should render ${name} in every style`, () => {
-        for (const style of /** @type {const} */ (['markdown', 'ansi', 'chalk', 'html', 'text'])) {
+        for (const style of /** @type {const} */ (['markdown', 'ansi', 'html', 'text'])) {
           assert.doesNotThrow(
             () => getMdastOutputter(style)(/** @type {any} */ (node)),
             `${name} should render in the ${style} style`

@@ -5,7 +5,7 @@ import chalk from 'chalk';
 
 import { getMdastOutputter, getOutputStyler } from '../index.js';
 
-/** @import { AnsiStyledOutput, ChalkStyledOutput, MarkdownStyledOutput } from '../index.js' */
+/** @import { AnsiStyledOutput, MarkdownStyledOutput } from '../index.js' */
 
 describe('mode selector', () => {
   it('markdown selector produces markdown output', () => {
@@ -20,17 +20,6 @@ describe('mode selector', () => {
     const moc = getOutputStyler('ansi');
     assert.equal(moc.type, 'ansi');
     assert.equal(moc.bold('x'), chalk.bold('x'));
-  });
-
-  it('chalk selector produces chalk output', () => {
-    /** @type {ChalkStyledOutput} */
-    const moc = getOutputStyler('chalk');
-    assert.equal(moc.type, 'chalk');
-    assert.equal(moc.bold('x'), chalk.bold('x'));
-  });
-
-  it('chalk selector exposes chalk object', () => {
-    assert.equal(getOutputStyler('chalk').chalk, chalk);
   });
 
   it('unknown style throws a TypeError', () => {
@@ -48,7 +37,7 @@ describe('mode selector', () => {
   });
 
   it('log symbols are frozen so one consumer cannot corrupt them', () => {
-    for (const style of /** @type {const} */ (['markdown', 'ansi', 'chalk', 'html', 'text', 'ansi-rich'])) {
+    for (const style of /** @type {const} */ (['markdown', 'ansi', 'html', 'text', 'ansi-rich'])) {
       assert.ok(Object.isFrozen(getOutputStyler(style).logSymbols), `${style} logSymbols`);
       assert.ok(Object.isFrozen(getOutputStyler(style).logSymbolsMdast), `${style} logSymbolsMdast`);
     }
