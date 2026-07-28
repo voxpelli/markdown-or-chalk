@@ -3,12 +3,10 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 
 describe('strikethrough and code', () => {
   describe('markdown mode', () => {
@@ -53,14 +51,13 @@ describe('strikethrough and code', () => {
   describe('chalk mode', () => {
     /** @type {AnyStyledOutput} */
     let moc;
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
-    after(() => { chalk.level = originalLevel; });
+    after(() => { restoreColor(); });
 
     it('strikethrough should contain text', () => {
       assert.ok(moc.strikethrough('text').includes('text'));

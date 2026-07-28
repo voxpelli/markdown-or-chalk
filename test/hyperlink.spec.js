@@ -3,12 +3,10 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 
 describe('hyperlink', () => {
   describe('markdown mode', () => {
@@ -45,17 +43,16 @@ describe('hyperlink', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
 
     after(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should return a string containing text or url', () => {

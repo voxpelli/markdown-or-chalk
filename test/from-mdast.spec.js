@@ -3,12 +3,11 @@ import {
   afterEach, beforeEach, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
 import { getMdastOutputter } from '../index.js';
+import { forceColor } from './force-color.js';
 
-/** @import { ColorSupportLevel } from 'chalk' */
 /** @import { FromMdast } from '../index.js' */
 
 describe('fromMdast', () => {
@@ -120,17 +119,16 @@ describe('fromMdast', () => {
     /** @type {FromMdast} */
     let fromMdast;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     beforeEach(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       fromMdast = getMdastOutputter('ansi');
     });
 
     afterEach(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should produce text from emphasis node', () => {
@@ -173,7 +171,7 @@ describe('fromMdast', () => {
           },
         ],
       });
-      // In chalk mode with level 0 (no hyperlink support), fallback shows text or url
+      // With colour off (no hyperlink support), fallback shows text or url
       const hasTextOrUrl = result.includes('Click here') || result.includes('https://example.com');
       assert.ok(hasTextOrUrl);
     });

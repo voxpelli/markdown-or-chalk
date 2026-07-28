@@ -3,25 +3,23 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
 import { getMdastOutputter, getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 
-/** @type {ColorSupportLevel} */
-let originalLevel;
+/** @type {() => void} */
+let restoreColor;
 
 // Exact string assertions need colour off — see CLAUDE.md
 before(() => {
-  originalLevel = chalk.level;
-  chalk.level = /** @type {ColorSupportLevel} */ (0);
+  restoreColor = forceColor('0');
 });
 
 after(() => {
-  chalk.level = originalLevel;
+  restoreColor();
 });
 
 describe('text style', () => {
@@ -132,8 +130,8 @@ describe('ansi-rich style', () => {
   });
 
   it('should box a code block and title it with the language', () => {
-    // Stripped rather than relying on chalk.level: cli-highlight styles through
-    // its own bundled chalk, which this suite's chalk instance cannot reach
+    // Stripped rather than asserting exact escapes: emphasize ships its own
+    // highlight sheet, and the colours are not this package's contract
     const result = stripAnsi(moc.fromMdast({ type: 'code', lang: 'js', value: 'const x = 1;' }));
 
     assert.match(result, /const x = 1;/);

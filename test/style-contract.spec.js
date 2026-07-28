@@ -3,11 +3,8 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getMdastOutputter, getOutputStyler } from '../index.js';
-
-/** @import { ColorSupportLevel } from 'chalk' */
+import { forceColor } from './force-color.js';
 
 const HEADING = /** @type {import('mdast').Heading} */ ({
   type: 'heading',
@@ -16,16 +13,15 @@ const HEADING = /** @type {import('mdast').Heading} */ ({
 });
 
 describe('style contract', () => {
-  /** @type {ColorSupportLevel} */
-  let originalLevel;
+  /** @type {() => void} */
+  let restoreColor;
 
   before(() => {
-    originalLevel = chalk.level;
-    chalk.level = /** @type {ColorSupportLevel} */ (0);
+    restoreColor = forceColor('0');
   });
 
   after(() => {
-    chalk.level = originalLevel;
+    restoreColor();
   });
 
   describe('customized stylers', () => {

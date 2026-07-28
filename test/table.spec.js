@@ -3,13 +3,11 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler, mdastTableHelper } from '../index.js';
 import { stringWidth } from '../lib/utils/string-width.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 /** @import { Emphasis, TableCell, TableRow } from 'mdast' */
 /** @import { PhrasingContentOrString } from '../index.js' */
 
@@ -147,17 +145,16 @@ describe('table', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
 
     after(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should produce string output containing cell content', () => {
@@ -230,7 +227,7 @@ describe('table', () => {
         ['👍', 2],
         ['✔️', 2],
         ['👩‍👩‍👧‍👦', 2],
-        [chalk.bold('bold'), 4],
+        ['\u001B[1mbold\u001B[22m', 4],
       ];
 
       for (const [value, expected] of widths) {

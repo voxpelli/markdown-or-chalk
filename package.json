@@ -19,7 +19,7 @@
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "MIT",
   "engines": {
-    "node": "^22.13.0 || >=24"
+    "node": "^22.19.0 || >=24.5.0"
   },
   "type": "module",
   "exports": "./index.js",
@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "@types/mdast": "^4.0.3",
-    "chalk": "^6.0.0",
     "get-east-asian-width": "^1.6.0",
     "is-unicode-supported": "^2.0.0",
     "mdast-util-gfm-footnote": "^2.1.0",

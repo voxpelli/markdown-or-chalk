@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getMdastOutputter, getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnsiStyledOutput, MarkdownStyledOutput } from '../index.js' */
 
@@ -18,8 +17,14 @@ describe('mode selector', () => {
   it('ansi selector produces ansi output', () => {
     /** @type {AnsiStyledOutput} */
     const moc = getOutputStyler('ansi');
-    assert.equal(moc.type, 'ansi');
-    assert.equal(moc.bold('x'), chalk.bold('x'));
+    const restoreColor = forceColor('1');
+
+    try {
+      assert.equal(moc.type, 'ansi');
+      assert.equal(moc.bold('x'), '\u001B[1mx\u001B[22m');
+    } finally {
+      restoreColor();
+    }
   });
 
   it('unknown style throws a TypeError', () => {
