@@ -7,11 +7,13 @@
  * repeated and the minimum kept, since noise only ever adds time.
  *
  * Dependency costs are reported **marginal in the graph that actually loads
- * them** — the delta on top of an already-imported `ansi` style — not in
- * isolation. Measured alone, boxen looks like ~38ms; but it shares
- * string-width, chalk and wrap-ansi with `ansi`, so the cost of *adding* it is
- * far smaller. Isolated figures systematically over-charge shared subtrees and
- * mis-rank which dependency is worth removing.
+ * them** — the delta on top of an already-imported style — not in isolation.
+ * Isolated figures charge every dependency for subtrees it shares with the
+ * style that loads it, which systematically mis-ranks what is worth removing.
+ *
+ * Two baselines are reported because the answer differs: `+markdown` is what a
+ * markdown-only consumer would pay to add it, `+ansi` what an ansi consumer
+ * would. A dependency the baseline style already loads shows as 0.0.
  *
  * Usage: node bench/cold-start.js
  */

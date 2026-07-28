@@ -1,7 +1,7 @@
 {
   "name": "markdown-or-chalk",
   "version": "0.3.2",
-  "description": "Prints through a single interface as Chalk enhanced CLI output or as Markdown",
+  "description": "Print through a single interface as Markdown, ANSI terminal, HTML or plain text",
   "homepage": "https://github.com/voxpelli/markdown-or-chalk",
   "repository": {
     "type": "git",
@@ -9,12 +9,12 @@
   },
   "keywords": [
     "markdown",
-    "chalk",
     "terminal",
+    "ansi",
+    "html",
     "formatting",
     "mdast",
-    "cli",
-    "ansi"
+    "cli"
   ],
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "MIT",

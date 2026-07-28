@@ -83,20 +83,20 @@ Returns only the `fromMdast` renderer function for the selected style.
 
 ### Getters
 
-| Getter            | Returns                                                       |
-| ----------------- | ------------------------------------------------------------- |
-| `type`            | the selected style string                                     |
-| `logSymbols`      | `{info, success, warning, error}` — emoji or styled symbols   |
-| `logSymbolsMdast` | `{info, success, warning, error}` — mdast-compatible symbols  |
+| Getter            | Returns                                                      |
+| ----------------- | ------------------------------------------------------------ |
+| `type`            | the selected style string                                    |
+| `logSymbols`      | `{info, success, warning, error}` — emoji or styled symbols  |
+| `logSymbolsMdast` | `{info, success, warning, error}` — mdast-compatible symbols |
 
 ### Exported Helpers
 
-| Helper                                 | Description                      |
-| -------------------------------------- | -------------------------------- |
-| `mdastTableHelper(rows, align?)`       | Build an mdast Table node                       |
-| `mdastListHelper(items)`               | Build an mdast List node                        |
-| `mdastLinkify(value, url, skipLinks?)` | Build an mdast Link or Text node                |
-| `ensurePhrasingContentList(list)`      | Turn strings into mdast Text nodes for a tree   |
+| Helper                                 | Description                                   |
+| -------------------------------------- | --------------------------------------------- |
+| `mdastTableHelper(rows, align?)`       | Build an mdast Table node                     |
+| `mdastListHelper(items)`               | Build an mdast List node                      |
+| `mdastLinkify(value, url, skipLinks?)` | Build an mdast Link or Text node              |
+| `ensurePhrasingContentList(list)`      | Turn strings into mdast Text nodes for a tree |
 
 ### Advanced: mdast helpers
 

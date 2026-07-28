@@ -154,6 +154,15 @@ describe('ansi-rich style', () => {
   });
 });
 
+/**
+ * @param {string} url
+ * @returns {string}
+ */
+const renderImage = url => getMdastOutputter('html')({
+  type: 'paragraph',
+  children: [{ type: 'image', url, alt: 'a' }],
+});
+
 describe('html style', () => {
   /** @type {AnyStyledOutput} */
   let moc;
@@ -276,6 +285,19 @@ describe('html style', () => {
     assert.deepEqual(moc.logSymbols, {
       info: 'ℹ', success: '✔', warning: '⚠', error: '✖',
     });
+  });
+
+  it('should allow non-scriptable data: images but not svg or documents', () => {
+    assert.match(renderImage('data:image/png;base64,AAA'), /<img src="data:image\/png;base64,AAA"/);
+    // svg can execute script the moment the same url reaches an <object>
+    assert.doesNotMatch(renderImage('data:image/svg+xml,<svg/>'), /<img/);
+    assert.doesNotMatch(renderImage('data:text/html,<script>x</script>'), /<img/);
+  });
+
+  it('should not escape composed fragments but should escape data', () => {
+    // The two groups are deliberately different — see the docstring
+    assert.equal(moc.bold('<em>x</em>'), '<strong><em>x</em></strong>');
+    assert.equal(moc.code('<script>'), '<code>&lt;script&gt;</code>');
   });
 
   it('should render a table with a head and a body', () => {

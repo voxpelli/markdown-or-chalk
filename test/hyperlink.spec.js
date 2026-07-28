@@ -128,12 +128,21 @@ describe('hyperlink', () => {
       assert.equal(moc.hyperlink('a]b', 'https://example.com/'), String.raw`[a\]b](https://example.com/)`);
     });
 
-    it('should escape angle brackets in the link text so they cannot inject html', () => {
-      assert.equal(moc.hyperlink('a<b>c', 'https://example.com/'), String.raw`[a\<b>c](https://example.com/)`);
+    it('should not markdown-escape the link text, so it composes', () => {
+      // `text` is already-formatted output, exactly as it is for bold() and the
+      // rest — escaping markdown syntax here would turn hyperlink(bold(x), url)
+      // into literal asterisks. Only link *structure* characters are escaped.
+      assert.equal(moc.hyperlink(moc.bold('x'), 'https://example.com/'), '[**x**](https://example.com/)');
+      assert.equal(moc.hyperlink('a*b_c', 'https://example.com/'), '[a*b_c](https://example.com/)');
     });
 
-    it('should escape emphasis characters in the link text', () => {
-      assert.equal(moc.hyperlink('a*b_c', 'https://example.com/'), String.raw`[a\*b\_c](https://example.com/)`);
+    it('should compose the same way in every style', () => {
+      for (const style of /** @type {const} */ (['markdown', 'ansi', 'text', 'html'])) {
+        const styler = getOutputStyler(style);
+        const result = styler.hyperlink(styler.bold('x'), 'https://example.com/');
+
+        assert.ok(result.includes(styler.bold('x')), `${style}: ${result}`);
+      }
     });
   });
 });

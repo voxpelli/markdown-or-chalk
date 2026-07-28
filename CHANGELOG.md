@@ -2,16 +2,13 @@
 
 ## [0.3.2](https://github.com/voxpelli/markdown-or-chalk/compare/v0.3.1...v0.3.2) (2026-07-27)
 
-
 ### 🩹 Fixes
 
-* publish *.cjs and *.d.cts ([5adeb4f](https://github.com/voxpelli/markdown-or-chalk/commit/5adeb4f1a3f388e23dfa15fa4ab8db3b38b0acdd))
-
+* publish \*.cjs and \*.d.cts ([5adeb4f](https://github.com/voxpelli/markdown-or-chalk/commit/5adeb4f1a3f388e23dfa15fa4ab8db3b38b0acdd))
 
 ### 📚 Documentation
 
 * simplify new README ([00877ff](https://github.com/voxpelli/markdown-or-chalk/commit/00877ffb6908ad26a5c11aafdbf02c0d9cdc661b))
-
 
 ### 🧹 Chores
 

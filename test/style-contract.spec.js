@@ -7,6 +7,7 @@ import { getMdastOutputter, getOutputStyler } from '../index.js';
 import { forceColor } from './force-color.js';
 
 /** @import { Heading, Nodes } from 'mdast' */
+/** @import { AnsiTextElement } from '../index.js' */
 
 const HEADING = /** @type {Heading} */ ({
   type: 'heading',
@@ -96,6 +97,34 @@ describe('style contract', () => {
         }
       });
     }
+  });
+
+  describe('log symbols', () => {
+    it('should resolve colour per access, not at import', () => {
+      const { logSymbols } = getOutputStyler('ansi');
+      const restoreOff = forceColor('0');
+      const plain = logSymbols.info;
+
+      restoreOff();
+
+      const restoreOn = forceColor('1');
+      const coloured = logSymbols.info;
+
+      restoreOn();
+
+      assert.notEqual(plain, coloured, 'colour policy set after import must be honoured');
+      assert.ok(coloured.includes('\u001B'), 'forced colour should emit escapes');
+      assert.ok(!plain.includes('\u001B'), 'forced no-colour should emit none');
+    });
+
+    it('should not let one consumer mutate them for everyone', () => {
+      const read = () => /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value;
+      const before = read();
+
+      /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value = 'HACKED';
+
+      assert.equal(read(), before);
+    });
   });
 
   describe('task lists', () => {

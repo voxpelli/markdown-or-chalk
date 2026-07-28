@@ -22,6 +22,7 @@ interface MdastStylingInterface {
 
 export interface TextStylingInterface {
   bold: (text: string) => string;
+  code(text: string): string;
   dim: (text: string) => string;
   header: (text: string, level?: number) => string;
   hyperlink: (text: string, url: string | undefined, options?: { fallback?: boolean; fallbackToUrl?: boolean; }) => string;
@@ -34,7 +35,6 @@ export interface TextStylingInterface {
 export interface StyledOutputInterface extends LogSymbolStylingInterface, MdastStylingInterface, TextStylingInterface {
   /** Narrowed to a literal by each implementing style — the registry keys on it */
   type: StyledOutputTypes;
-  code(text: string): string;
   indent(text: string, level?: number): string;
   json(value: unknown): string;
   list(items: string[]): string;

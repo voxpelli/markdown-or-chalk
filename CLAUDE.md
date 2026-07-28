@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 * Tests use `node:test` + `node:assert/strict`, c8 for coverage
 * Use `forceColor('0')` from test/force-color.js in before/after hooks when testing ansi — `styleText` re-reads `FORCE_COLOR` per call, so it works after import and also reaches nested dependencies
-* test/ansi-golden.spec.js pins escape-sequence output at a *forced* colour level — the rest of the suite runs with colour off, where changes to escape handling are invisible
+* test/ansi-golden.spec.js pins escape-sequence output at a _forced_ colour level — the rest of the suite runs with colour off, where changes to escape handling are invisible
 * `ensurePhrasingContentList` is exported from index.js — it turns the string form of `logSymbolsMdast` into real mdast nodes
 * Test glob: `test/**/*.spec.js` — supports multiple spec files
 
@@ -39,9 +39,9 @@ lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let a consum
 
 **Why the CJS exception is worth its cost**: it keeps `ansi-rich` — the one style with heavy dependencies — off everyone else's load path, and lets a missing optional peer be caught and reported (`lib/main.cjs`), which a static ESM import could not do.
 
-**Benchmark numbers move with machine load, so compare within one run, never across sessions.** `npm run bench` (bench/cold-start.js) reports two things: per-style cold start, and per-dependency cost *marginal on top of an already-loaded style*. Marginal is the number that matters — measured in isolation, a dependency is charged for every subtree it shares with the style that loads it, which made boxen look ~4x more expensive than it is.
+**Benchmark numbers move with machine load, so compare within one run, never across sessions.** `npm run bench` (bench/cold-start.js) reports two things: per-style cold start, and per-dependency cost _marginal on top of an already-loaded style_. Marginal is the number that matters — measured in isolation, a dependency is charged for every subtree it shares with the style that loads it, which made boxen look \~4x more expensive than it is.
 
-Indicative shape at time of writing: `markdown` ~43ms, `html` ~44ms, `text` ~49ms, `ansi` ~59ms, `ansi-rich` ~210ms. `emphasize` is ~88ms of that premium and `boxen` ~32ms; nothing else exceeds 10ms.
+Indicative shape at time of writing: `markdown` \~43ms, `html` \~44ms, `text` \~49ms, `ansi` \~59ms, `ansi-rich` \~210ms. `emphasize` is \~88ms of that premium and `boxen` \~32ms; nothing else exceeds 10ms.
 
 ### mdast integration
 
