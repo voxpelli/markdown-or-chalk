@@ -15,6 +15,9 @@ const HEADING = /** @type {Heading} */ ({
   children: [{ type: 'text', value: 'Hi' }],
 });
 
+const readSuccessValue = () =>
+  /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value;
+
 describe('style contract', () => {
   /** @type {() => void} */
   let restoreColor;
@@ -83,6 +86,14 @@ describe('style contract', () => {
       footnoteReference: { type: 'paragraph', children: [{ type: 'footnoteReference', identifier: 'a' }] },
       footnoteDefinition: { type: 'footnoteDefinition', identifier: 'a', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'note' }] }] },
       table: { type: 'table', children: [{ type: 'tableRow', children: [{ type: 'tableCell', children: [{ type: 'text', value: 'c' }] }] }] },
+      // Rows and cells outside a table: the terminal styles get these free from
+      // gfmTableToMarkdown, so only html had to be taught them
+      tableRow: { type: 'tableRow', children: [{ type: 'tableCell', children: [{ type: 'text', value: 'c' }] }] },
+      tableCell: { type: 'tableCell', children: [{ type: 'text', value: 'c' }] },
+      listItem: { type: 'listItem', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'i' }] }] },
+      linkReference: { type: 'paragraph', children: [{ type: 'linkReference', identifier: 'd', referenceType: 'full', children: [{ type: 'text', value: 'L' }] }] },
+      imageReference: { type: 'paragraph', children: [{ type: 'imageReference', identifier: 'd', referenceType: 'full', alt: 'A' }] },
+      definition: { type: 'definition', identifier: 'd', url: 'https://e.com/' },
       blockquote: { type: 'blockquote', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'q' }] }] },
       thematicBreak: { type: 'thematicBreak' },
     };
@@ -95,6 +106,48 @@ describe('style contract', () => {
             `${name} should render in the ${style} style`
           );
         }
+      });
+    }
+
+    // Reference-style links are exactly what remark-parse emits for `[a][b]`,
+    // so leaving them unhandled leaked `[L][d]` and a whole `[d]: url` line into
+    // the styles whose entire promise is that they carry no markup
+    for (const style of /** @type {const} */ (['ansi', 'html', 'text'])) {
+      it(`should not leak reference-link syntax into ${style}`, () => {
+        const render = getMdastOutputter(style);
+
+        assert.doesNotMatch(render(/** @type {Nodes} */ (SHARED_CONSTRUCTS.linkReference)), /\[L\]\[d\]/);
+        assert.doesNotMatch(render(/** @type {Nodes} */ (SHARED_CONSTRUCTS.imageReference)), /!\[A\]/);
+        assert.doesNotMatch(render(/** @type {Nodes} */ (SHARED_CONSTRUCTS.definition)), /\[d\]:/);
+      });
+    }
+
+    it('should not leak a markdown bullet into html', () => {
+      assert.doesNotMatch(
+        getMdastOutputter('html')(/** @type {Nodes} */ (SHARED_CONSTRUCTS.listItem)),
+        /^\*/
+      );
+    });
+  });
+
+  describe('overrides across styles', () => {
+    // Every style but markdown routes its styling nodes through `format`;
+    // markdown deliberately serializes stock so its output stays valid markdown.
+    // text and html each used to skip `code` alone, which made an override work
+    // when called directly and vanish when the same styler rendered a tree.
+    for (const style of /** @type {const} */ (['ansi', 'ansi-rich', 'html', 'text'])) {
+      it(`should honour an overridden code in the ${style} fromMdast`, () => {
+        const custom = {
+          ...getOutputStyler(style),
+          code: (/** @type {string} */ text) => `CODE(${text})`,
+        };
+
+        const result = custom.fromMdast({
+          type: 'paragraph',
+          children: [{ type: 'inlineCode', value: 'x' }],
+        });
+
+        assert.match(result, /CODE\(x\)/, 'the override must reach the inlineCode handler');
       });
     }
   });
@@ -118,12 +171,18 @@ describe('style contract', () => {
     });
 
     it('should not let one consumer mutate them for everyone', () => {
-      const read = () => /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value;
-      const before = read();
+      const before = readSuccessValue();
 
-      /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value = 'HACKED';
+      assert.throws(() => {
+        /** @type {AnsiTextElement} */ (getOutputStyler('ansi').logSymbolsMdast.success).value = 'HACKED';
+      }, TypeError);
+      assert.equal(readSuccessValue(), before);
+    });
 
-      assert.equal(read(), before);
+    it('should keep node identity stable so consumers can memoise', () => {
+      const { logSymbolsMdast } = getOutputStyler('ansi');
+
+      assert.equal(logSymbolsMdast.success, logSymbolsMdast.success);
     });
   });
 
