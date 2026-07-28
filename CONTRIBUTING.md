@@ -34,7 +34,7 @@ npm install
 * **`lib/utils/log-symbols-plain.js`** — the uncoloured glyphs, split into an unconditional unicode set and a terminal-probed one.
 * **`lib/utils/log-symbols-ansi.js`** — the coloured log symbols.
 * **`lib/utils/ansi.js`** — ANSI escape-sequence awareness (`mapVisibleText`, `stripAnsi`).
-* **`lib/utils/string-width.js`** — rendered column width, for table alignment.
+* **`lib/utils/string-width.js`** — rendered column width, for table alignment. A thin wrapper over `string-width` that strips escapes with this package's own pattern first.
 * **`lib/utils/html-escape.js`** — HTML text and attribute escaping.
 * **`lib/utils/style-text.js`** — the `styleText` wrapper that restores per-line styling.
 * **`lib/utils/url.js`** — `filterHyperlinkUrl`, hyperlink URL sanitization shared by all styles.

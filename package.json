@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "@types/mdast": "^4.0.3",
-    "get-east-asian-width": "^1.6.0",
     "is-unicode-supported": "^2.0.0",
     "mdast-util-gfm-footnote": "^2.1.0",
     "mdast-util-gfm-strikethrough": "^2.0.0",
@@ -71,6 +70,7 @@
     "mdast-util-gfm-task-list-item": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "mdast-util-to-string": "^4.0.0",
+    "string-width": "^8.2.2",
     "terminal-link": "^5.0.0"
   },
   "devDependencies": {

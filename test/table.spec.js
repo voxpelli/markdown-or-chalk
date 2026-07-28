@@ -210,10 +210,14 @@ describe('table', () => {
     });
 
     it('should measure column widths the way a terminal renders them', () => {
-      // Table alignment is only as good as the width measurement behind it.
-      // The log symbols are the case string-width@7 got wrong: they are
-      // Extended_Pictographic but *not* Emoji_Presentation, so terminals draw
-      // them in one column while that version reserved two.
+      // Table alignment is only as good as the width measurement behind it,
+      // and this pins the contract we need from `string-width` rather than
+      // testing it. The log symbols are the case `string-width@7` got wrong —
+      // they are Extended_Pictographic but *not* Emoji_Presentation, so a
+      // terminal draws them in one column while `emoji-regex` reserved two.
+      // `@8` switched to `\p{RGI_Emoji}` and gets them right; if that ever
+      // regresses these rows say so, rather than a mis-aligned table in
+      // someone else's terminal.
       /** @type {[string, number][]} */
       const widths = [
         ['a', 1],
@@ -228,11 +232,27 @@ describe('table', () => {
         ['✔️', 2],
         ['👩‍👩‍👧‍👦', 2],
         ['\u001B[1mbold\u001B[22m', 4],
+        // Clusters spanning more than one code point, which a per-code-point
+        // zero-width test reports as one column
+        ['\u0301\u0302', 0],
+        ['\r\n', 0],
+        ['\u0301\uFE0F', 0],
+        // A spacing combining mark does advance the cursor, unlike Mn/Me
+        ['\u093E', 1],
       ];
 
       for (const [value, expected] of widths) {
         assert.equal(stringWidth(value), expected, JSON.stringify(value));
       }
+    });
+
+    it('should measure a pipe inside an OSC 8 url as invisible', () => {
+      // `string-width` strips with `ansi-regex`, whose OSC payload class
+      // excludes `|`, so the url tail would count as visible text and pad the
+      // column to the wrong width. Our own ANSI-aware strip runs first
+      const link = '\u001B]8;;https://e.com/a|b\u0007text\u001B]8;;\u0007';
+
+      assert.equal(stringWidth(link), 4);
     });
 
     it('should align columns containing wide characters', () => {

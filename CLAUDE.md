@@ -43,7 +43,9 @@ lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let a consum
 
 **Benchmark numbers move with machine load, so compare within one run, never across sessions.** `npm run bench` (bench/cold-start.js) reports two things: per-style cold start, and per-dependency cost _marginal on top of an already-loaded style_. Marginal is the number that matters — measured in isolation, a dependency is charged for every subtree it shares with the style that loads it, which made boxen look \~4x more expensive than it is.
 
-Indicative shape at time of writing: `markdown` \~43ms, `html` \~44ms, `text` \~49ms, `ansi` \~59ms, `ansi-rich` \~210ms. `emphasize` is \~88ms of that premium and `boxen` \~32ms; nothing else exceeds 10ms.
+Indicative shape at time of writing: `markdown` \~37ms, `html` \~37ms, `text` \~68ms, `ansi` \~74ms, `ansi-rich` \~172ms. Marginal on top of `markdown`: `emphasize` \~69ms, `boxen` \~30ms, `string-width` \~30ms, `terminal-link` \~7ms.
+
+`string-width` is the price of the table styles and it is paid deliberately. It was briefly inlined over `get-east-asian-width` because `string-width@7` measured this package's own log symbols (`✔ ⚠ ℹ ✖`) as two columns, mis-aligning any table containing one. `@8` moved from `emoji-regex` to `\p{RGI_Emoji}` and reports them as one, so the correctness reason is gone — and the inlined version had four width bugs of its own found in review (multi-code-point clusters, CRLF, VS16 after a combining mark, spacing `Mc` marks). Owning Unicode width to save \~30ms on two styles is not a trade this package should take twice.
 
 ### mdast integration
 

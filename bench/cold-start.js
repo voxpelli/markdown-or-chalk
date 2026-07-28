@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 /** @import { StyledOutputTypes } from '../index.js' */
 
 const STYLES = ['markdown', 'text', 'html', 'ansi', 'ansi-rich'];
-const DEPENDENCIES = ['emphasize', 'boxen', 'terminal-link', 'get-east-asian-width'];
+const DEPENDENCIES = ['emphasize', 'boxen', 'terminal-link', 'string-width'];
 const RUNS = 5;
 
 const [mode, target] = process.argv.slice(2);
