@@ -6,6 +6,7 @@ import {
 import chalk from 'chalk';
 
 import { getOutputStyler, mdastTableHelper } from '../index.js';
+import { stringWidth } from '../lib/utils/string-width.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
 /** @import { ColorSupportLevel } from 'chalk' */
@@ -209,6 +210,40 @@ describe('table', () => {
 
         assert.ok(result.includes(String.raw`x\|y`), result);
       }
+    });
+
+    it('should measure column widths the way a terminal renders them', () => {
+      // Table alignment is only as good as the width measurement behind it.
+      // The log symbols are the case string-width@7 got wrong: they are
+      // Extended_Pictographic but *not* Emoji_Presentation, so terminals draw
+      // them in one column while that version reserved two.
+      /** @type {[string, number][]} */
+      const widths = [
+        ['a', 1],
+        ['', 0],
+        ['中文', 4],
+        ['ｆｕｌｌ', 8],
+        ['✔ ok', 4],
+        ['⚠ warn', 6],
+        ['ℹ info', 6],
+        ['✖ fail', 6],
+        ['👍', 2],
+        ['✔️', 2],
+        ['👩‍👩‍👧‍👦', 2],
+        [chalk.bold('bold'), 4],
+      ];
+
+      for (const [value, expected] of widths) {
+        assert.equal(stringWidth(value), expected, JSON.stringify(value));
+      }
+    });
+
+    it('should align columns containing wide characters', () => {
+      const result = moc.table([[['中文'], ['b']], [['ab'], ['c']]]);
+      const [header, , body] = result.trim().split('\n');
+
+      // Both rows occupy the same rendered width once measured properly
+      assert.equal(stringWidth(/** @type {string} */ (header)), stringWidth(/** @type {string} */ (body)));
     });
 
     it('should not pass align to mdast in chalk mode', () => {
