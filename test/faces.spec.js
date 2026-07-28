@@ -53,6 +53,41 @@ describe('text style', () => {
   });
 });
 
+describe('ansi-rich style', () => {
+  /** @type {AnyStyledOutput} */
+  let moc;
+
+  before(() => {
+    moc = getOutputStyler('ansi-rich');
+  });
+
+  it('should expose its type', () => {
+    assert.equal(moc.type, 'ansi-rich');
+  });
+
+  it('should box a code block and title it with the language', () => {
+    const result = moc.fromMdast({ type: 'code', lang: 'js', value: 'const x = 1;' });
+
+    assert.match(result, /const x = 1;/);
+    assert.match(result, /js/);
+    // boxen draws a border, the lean ansi style does not
+    assert.match(result, /[┌└│]/);
+  });
+
+  it('should not crash on an unknown code block language', () => {
+    const result = moc.fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' });
+
+    assert.match(result, /plain content/);
+  });
+
+  it('should keep the lean rendering out of the plain ansi style', () => {
+    const lean = getOutputStyler('ansi').fromMdast({ type: 'code', lang: 'js', value: 'const x = 1;' });
+
+    assert.match(lean, /const x = 1;/);
+    assert.doesNotMatch(lean, /[┌┐└┘]/);
+  });
+});
+
 describe('html style', () => {
   /** @type {AnyStyledOutput} */
   let moc;

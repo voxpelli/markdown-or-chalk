@@ -36,6 +36,7 @@
     "lib/**/*.d.cts.map"
   ],
   "scripts": {
+    "bench": "node bench/cold-start.js",
     "build": "run-s build:*",
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",

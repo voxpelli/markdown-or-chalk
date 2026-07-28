@@ -36,8 +36,13 @@ Returns a formatter for one of these styles:
 * `'chalk'` – Chalk-flavored terminal output (legacy compatibility; prefer `'ansi'`)
 * `'html'` – Semantic HTML, with no classes or inline styles
 * `'text'` – Plain text, with no ANSI and no markup — for pipes, log files and `NO_COLOR`
+* `'ansi-rich'` – `'ansi'` plus boxed, syntax-highlighted code blocks
 
 Unknown styles throw a `TypeError`.
+
+Only `'ansi-rich'` loads `boxen` and `cli-highlight`, which together cost more
+to load than the rest of the package combined — plain `'ansi'` renders code
+blocks with a dim rule instead. Run `npm run bench` to see the numbers.
 
 ### Customizing a style
 
@@ -81,7 +86,7 @@ Returns only the `fromMdast` renderer function for the selected style.
 
 | Getter            | Returns                                                       |
 | ----------------- | ------------------------------------------------------------- |
-| `type`            | `'markdown'`, `'ansi'`, `'chalk'`, `'html'` or `'text'`       |
+| `type`            | the selected style string                                     |
 | `logSymbols`      | `{info, success, warning, error}` — emoji or styled symbols   |
 | `logSymbolsMdast` | `{info, success, warning, error}` — mdast-compatible symbols  |
 | `chalk`           | `ChalkInstance` in chalk mode (`deprecated`, prefer `'ansi'`) |

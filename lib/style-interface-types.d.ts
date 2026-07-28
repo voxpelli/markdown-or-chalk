@@ -48,6 +48,11 @@ export interface AnsiStyledOutput extends StyledOutputInterface {
   type: 'ansi';
 }
 
+/** `ansi` plus boxed, syntax-highlighted code blocks — loads boxen + cli-highlight */
+export interface AnsiRichStyledOutput extends StyledOutputInterface {
+  type: 'ansi-rich';
+}
+
 export interface ChalkStyledOutput extends StyledOutputInterface {
   type: 'chalk';
 
@@ -72,6 +77,7 @@ export interface TextStyledOutput extends StyledOutputInterface {
 // *** Unions for implemented styles ***
 
 export type AnyStyledOutput =
+  AnsiRichStyledOutput |
   AnsiStyledOutput |
   ChalkStyledOutput |
   HtmlStyledOutput |

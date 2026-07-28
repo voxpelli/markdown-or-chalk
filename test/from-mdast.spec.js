@@ -268,8 +268,7 @@ describe('fromMdast', () => {
 
     it('should not crash on unknown code block languages', () => {
       const result = fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' });
-      assert.match(result, /plain content/);
-      assert.match(result, /not-a-real-language/);
+      assert.match(stripAnsi(result), /plain content/);
     });
 
     it('should separate multiple paragraphs in a list item', () => {

@@ -34,7 +34,11 @@ This is a dual-output formatting library: given the same API calls, it produces 
 
 The `ansi` and `text` styles share their mdast handlers via `buildStyleOptions()` (lib/mdast-handlers.js) — they differ in decoration, not structure, so each supplies only its own `codeBlock` / `inlineCode` / `quoteLine` / `thematicBreak` renderers. `html` has its own handler set because nested tags are a genuinely different shape, and it emits **no classes or inline styles** (the one exception being the conventional `language-*` class on code blocks).
 
-lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let markdown-only consumers avoid loading chalk/boxen/cli-highlight. It is the only CJS file in the package; everything else is ESM.
+lib/main.cjs is deliberately CommonJS: its lazy `require()` getters let a consumer avoid loading the styles it does not select. It is the only CJS file in the package; everything else is ESM.
+
+**Why the CJS exception is still worth its cost** (measured with `npm run bench`, see bench/cold-start.js): lazily, `markdown` costs ~37ms and `ansi` ~60ms; eagerly loading every non-rich style costs ~73ms. So the lazy registry is still a ~2x saving for the common markdown-only case. Going pure ESM with a single eager entry would regress that. Revisit if the numbers change.
+
+Heavy dependencies are quarantined in the `ansi-rich` style (~183ms — cli-highlight ~110ms and boxen ~38ms). Plain `ansi` loads neither.
 
 ### mdast integration
 
