@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import chalk from 'chalk';
 
-import { getOutputStyler } from '../index.js';
+import { getMdastOutputter, getOutputStyler } from '../index.js';
 
 /** @import { AnsiStyledOutput, ChalkStyledOutput, MarkdownStyledOutput } from '../index.js' */
 
@@ -31,5 +31,17 @@ describe('mode selector', () => {
 
   it('chalk selector exposes chalk object', () => {
     assert.equal(getOutputStyler('chalk').chalk, chalk);
+  });
+
+  it('unknown style throws a TypeError', () => {
+    // @ts-expect-error -- testing invalid input
+    assert.throws(() => getOutputStyler('nope'), { name: 'TypeError', message: /'nope'/ });
+  });
+
+  it('legacy boolean style throws a TypeError', () => {
+    // @ts-expect-error -- testing the old MarkdownOrChalk boolean argument
+    assert.throws(() => getOutputStyler(true), { name: 'TypeError', message: /boolean/ });
+    // @ts-expect-error -- testing the old MarkdownOrChalk boolean argument
+    assert.throws(() => getMdastOutputter(false), { name: 'TypeError', message: /boolean/ });
   });
 });

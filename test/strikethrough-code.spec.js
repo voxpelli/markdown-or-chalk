@@ -23,6 +23,16 @@ describe('strikethrough and code', () => {
     it('code should wrap in backticks', () => {
       assert.equal(moc.code('text'), '`text`');
     });
+
+    it('code should lengthen the fence for content with backticks', () => {
+      assert.equal(moc.code('a`b'), '`` a`b ``');
+      assert.equal(moc.code('a``b'), '``` a``b ```');
+    });
+
+    it('code should handle very large content without a call stack overflow', () => {
+      const text = '`a'.repeat(150_000);
+      assert.ok(moc.code(text).includes(text));
+    });
   });
 
   describe('chalk mode', () => {

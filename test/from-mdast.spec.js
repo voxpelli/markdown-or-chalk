@@ -106,6 +106,14 @@ describe('fromMdast', () => {
       });
       assert.match(result, /`foo\(\)`/);
     });
+
+    it('should render strikethrough (delete) nodes', () => {
+      const result = fromMdast({
+        type: 'paragraph',
+        children: [{ type: 'delete', children: [{ type: 'text', value: 'gone' }] }],
+      });
+      assert.equal(result, '~~gone~~\n');
+    });
   });
 
   describe('ansi mode', () => {
@@ -256,6 +264,42 @@ describe('fromMdast', () => {
       });
       assert.match(result, /1\./);
       assert.match(result, /2\./);
+    });
+
+    it('should not crash on unknown code block languages', () => {
+      const result = fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' });
+      assert.match(result, /plain content/);
+      assert.match(result, /not-a-real-language/);
+    });
+
+    it('should separate multiple paragraphs in a list item', () => {
+      const result = fromMdast({
+        type: 'list',
+        ordered: false,
+        children: [{
+          type: 'listItem',
+          children: [
+            { type: 'paragraph', children: [{ type: 'text', value: 'para one' }] },
+            { type: 'paragraph', children: [{ type: 'text', value: 'para two' }] },
+          ],
+        }],
+      });
+      assert.equal(result, '- para one\n\n  para two\n');
+    });
+
+    it('should indent nested lists under their parent item', () => {
+      const result = fromMdast({
+        type: 'list',
+        ordered: false,
+        children: [{
+          type: 'listItem',
+          children: [
+            { type: 'paragraph', children: [{ type: 'text', value: 'parent' }] },
+            { type: 'list', ordered: false, children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'nested' }] }] }] },
+          ],
+        }],
+      });
+      assert.equal(result, '- parent\n\n  - nested\n');
     });
   });
 });

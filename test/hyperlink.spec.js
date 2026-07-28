@@ -77,4 +77,58 @@ describe('hyperlink', () => {
       assert.equal(moc.hyperlink('text', 'url', { fallbackToUrl: true }), 'url');
     });
   });
+
+  describe('url filtering', () => {
+    /** @type {AnyStyledOutput} */
+    let moc;
+
+    before(() => {
+      moc = getOutputStyler('markdown');
+    });
+
+    it('should block javascript: urls', () => {
+      assert.equal(moc.hyperlink('text', 'javascript:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', 'JaVaScRiPt:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', '  javascript:alert(1)'), 'text');
+    });
+
+    it('should block javascript: urls hidden by control characters', () => {
+      assert.equal(moc.hyperlink('text', 'java\u0000script:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', 'java\tscript:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', '\u0001javascript:alert(1)'), 'text');
+    });
+
+    it('should block data: and vbscript: urls', () => {
+      assert.equal(moc.hyperlink('text', 'data:text/html,foo'), 'text');
+      assert.equal(moc.hyperlink('text', 'vbscript:msgbox'), 'text');
+    });
+
+    it('should strip control characters from allowed urls', () => {
+      assert.equal(moc.hyperlink('text', 'https://example.com/\u0007a'), '[text](https://example.com/a)');
+    });
+  });
+
+  describe('markdown escaping', () => {
+    /** @type {AnyStyledOutput} */
+    let moc;
+
+    before(() => {
+      moc = getOutputStyler('markdown');
+    });
+
+    it('should escape parentheses in urls', () => {
+      assert.equal(
+        moc.hyperlink('a', 'https://en.wikipedia.org/wiki/Foo_(bar)'),
+        String.raw`[a](https://en.wikipedia.org/wiki/Foo_\(bar\))`
+      );
+    });
+
+    it('should wrap urls containing spaces in angle brackets', () => {
+      assert.equal(moc.hyperlink('a', 'https://example.com/a b'), '[a](<https://example.com/a b>)');
+    });
+
+    it('should escape square brackets in the link text', () => {
+      assert.equal(moc.hyperlink('a]b', 'https://example.com/'), String.raw`[a\]b](https://example.com/)`);
+    });
+  });
 });
