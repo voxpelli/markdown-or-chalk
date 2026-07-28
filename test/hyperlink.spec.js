@@ -130,5 +130,13 @@ describe('hyperlink', () => {
     it('should escape square brackets in the link text', () => {
       assert.equal(moc.hyperlink('a]b', 'https://example.com/'), String.raw`[a\]b](https://example.com/)`);
     });
+
+    it('should escape angle brackets in the link text so they cannot inject html', () => {
+      assert.equal(moc.hyperlink('a<b>c', 'https://example.com/'), String.raw`[a\<b>c](https://example.com/)`);
+    });
+
+    it('should escape emphasis characters in the link text', () => {
+      assert.equal(moc.hyperlink('a*b_c', 'https://example.com/'), String.raw`[a\*b\_c](https://example.com/)`);
+    });
   });
 });

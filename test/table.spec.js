@@ -171,6 +171,18 @@ describe('table', () => {
       assert.ok(result.includes('bar'));
     });
 
+    it('should escape pipes in cell content so columns stay aligned', () => {
+      const result = moc.table([
+        [['a|b'], ['c']],
+        [['1'], ['2']],
+      ]);
+
+      assert.ok(result.includes(String.raw`a\|b`));
+      // Every row has the same number of unescaped column separators
+      const separators = result.trim().split('\n').map(line => line.split(/(?<!\\)\|/).length);
+      assert.equal(new Set(separators).size, 1);
+    });
+
     it('should not pass align to mdast in chalk mode', () => {
       // In chalk mode, align is set to undefined regardless of input
       // This means the output should still work but without alignment hints
