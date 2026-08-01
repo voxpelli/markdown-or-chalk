@@ -3,12 +3,11 @@ import {
   afterEach, beforeEach, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
 import { getMdastOutputter } from '../index.js';
+import { forceColor } from './force-color.js';
 
-/** @import { ColorSupportLevel } from 'chalk' */
 /** @import { FromMdast } from '../index.js' */
 
 describe('fromMdast', () => {
@@ -106,23 +105,30 @@ describe('fromMdast', () => {
       });
       assert.match(result, /`foo\(\)`/);
     });
+
+    it('should render strikethrough (delete) nodes', () => {
+      const result = fromMdast({
+        type: 'paragraph',
+        children: [{ type: 'delete', children: [{ type: 'text', value: 'gone' }] }],
+      });
+      assert.equal(result, '~~gone~~\n');
+    });
   });
 
   describe('ansi mode', () => {
     /** @type {FromMdast} */
     let fromMdast;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     beforeEach(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       fromMdast = getMdastOutputter('ansi');
     });
 
     afterEach(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should produce text from emphasis node', () => {
@@ -165,7 +171,7 @@ describe('fromMdast', () => {
           },
         ],
       });
-      // In chalk mode with level 0 (no hyperlink support), fallback shows text or url
+      // With colour off (no hyperlink support), fallback shows text or url
       const hasTextOrUrl = result.includes('Click here') || result.includes('https://example.com');
       assert.ok(hasTextOrUrl);
     });
@@ -256,6 +262,41 @@ describe('fromMdast', () => {
       });
       assert.match(result, /1\./);
       assert.match(result, /2\./);
+    });
+
+    it('should not crash on unknown code block languages', () => {
+      const result = fromMdast({ type: 'code', lang: 'not-a-real-language', value: 'plain content' });
+      assert.match(stripAnsi(result), /plain content/);
+    });
+
+    it('should separate multiple paragraphs in a list item', () => {
+      const result = fromMdast({
+        type: 'list',
+        ordered: false,
+        children: [{
+          type: 'listItem',
+          children: [
+            { type: 'paragraph', children: [{ type: 'text', value: 'para one' }] },
+            { type: 'paragraph', children: [{ type: 'text', value: 'para two' }] },
+          ],
+        }],
+      });
+      assert.equal(result, '- para one\n\n  para two\n');
+    });
+
+    it('should indent nested lists under their parent item', () => {
+      const result = fromMdast({
+        type: 'list',
+        ordered: false,
+        children: [{
+          type: 'listItem',
+          children: [
+            { type: 'paragraph', children: [{ type: 'text', value: 'parent' }] },
+            { type: 'list', ordered: false, children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ type: 'text', value: 'nested' }] }] }] },
+          ],
+        }],
+      });
+      assert.equal(result, '- parent\n\n  - nested\n');
     });
   });
 });

@@ -28,7 +28,7 @@ The only write-time multi-format abstraction built on [mdast](https://github.com
 
 1. **Zero new runtime deps for new modes** — custom handlers, not AST pipelines
 2. **Semantic output** — `<strong>` not `<span class="bold">`, `~~text~~` not custom syntax
-3. **Backward-compatible evolution** — boolean constructor still works, new modes are additive
+3. **Backward-compatible evolution** — breaking changes come with a documented migration path, new modes are additive
 4. **mdast-native** — build on the standard, don't reinvent AST formats
 5. **Callers own their content** — no input sanitization (except URL control chars); document safety expectations
 

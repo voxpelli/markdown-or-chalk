@@ -3,13 +3,13 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler, mdastTableHelper } from '../index.js';
+import { stringWidth } from '../lib/utils/string-width.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 /** @import { Emphasis, TableCell, TableRow } from 'mdast' */
+/** @import { PhrasingContentOrString } from '../index.js' */
 
 describe('table', () => {
   describe('mdastTableHelper', () => {
@@ -141,21 +141,20 @@ describe('table', () => {
     });
   });
 
-  describe('table() chalk mode', () => {
+  describe('table() ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
 
     after(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should produce string output containing cell content', () => {
@@ -171,8 +170,101 @@ describe('table', () => {
       assert.ok(result.includes('bar'));
     });
 
-    it('should not pass align to mdast in chalk mode', () => {
-      // In chalk mode, align is set to undefined regardless of input
+    it('should escape pipes in cell content so columns stay aligned', () => {
+      const result = moc.table([
+        [['a|b'], ['c']],
+        [['1'], ['2']],
+      ]);
+
+      assert.ok(result.includes(String.raw`a\|b`));
+      // Every row has the same number of unescaped column separators
+      const separators = result.trim().split('\n').map(line => line.split(/(?<!\\)\|/).length);
+      assert.equal(new Set(separators).size, 1);
+    });
+
+    it('should escape a backslash before a pipe, not just the pipe', () => {
+      // Without escaping the backslash the row gains an unescaped delimiter
+      const result = moc.table([[[String.raw`a\|b`]], [['c']]]);
+
+      assert.ok(result.includes(String.raw`a\\\|b`), result);
+    });
+
+    it('should keep a newline in a cell from splitting the row', () => {
+      const result = moc.table([[['x\ny']], [['c']]]);
+
+      assert.equal(result.trim().split('\n').length, 3);
+    });
+
+    it('should escape pipes reaching a cell from any node type', () => {
+      /** @type {PhrasingContentOrString[]} */
+      const nodes = [
+        { type: 'inlineCode', value: 'x|y' },
+        { type: 'ansiTextElement', value: 'x|y' },
+      ];
+
+      for (const node of nodes) {
+        const result = moc.table([[[node]], [['c']]]);
+
+        assert.ok(result.includes(String.raw`x\|y`), result);
+      }
+    });
+
+    it('should measure column widths the way a terminal renders them', () => {
+      // Table alignment is only as good as the width measurement behind it,
+      // and this pins the contract we need from `string-width` rather than
+      // testing it. The log symbols are the case `string-width@7` got wrong —
+      // they are Extended_Pictographic but *not* Emoji_Presentation, so a
+      // terminal draws them in one column while `emoji-regex` reserved two.
+      // `@8` switched to `\p{RGI_Emoji}` and gets them right; if that ever
+      // regresses these rows say so, rather than a mis-aligned table in
+      // someone else's terminal.
+      /** @type {[string, number][]} */
+      const widths = [
+        ['a', 1],
+        ['', 0],
+        ['中文', 4],
+        ['ｆｕｌｌ', 8],
+        ['✔ ok', 4],
+        ['⚠ warn', 6],
+        ['ℹ info', 6],
+        ['✖ fail', 6],
+        ['👍', 2],
+        ['✔️', 2],
+        ['👩‍👩‍👧‍👦', 2],
+        ['\u001B[1mbold\u001B[22m', 4],
+        // Clusters spanning more than one code point, which a per-code-point
+        // zero-width test reports as one column
+        ['\u0301\u0302', 0],
+        ['\r\n', 0],
+        ['\u0301\uFE0F', 0],
+        // A spacing combining mark does advance the cursor, unlike Mn/Me
+        ['\u093E', 1],
+      ];
+
+      for (const [value, expected] of widths) {
+        assert.equal(stringWidth(value), expected, JSON.stringify(value));
+      }
+    });
+
+    it('should measure a pipe inside an OSC 8 url as invisible', () => {
+      // `string-width` strips with `ansi-regex`, whose OSC payload class
+      // excludes `|`, so the url tail would count as visible text and pad the
+      // column to the wrong width. Our own ANSI-aware strip runs first
+      const link = '\u001B]8;;https://e.com/a|b\u0007text\u001B]8;;\u0007';
+
+      assert.equal(stringWidth(link), 4);
+    });
+
+    it('should align columns containing wide characters', () => {
+      const result = moc.table([[['中文'], ['b']], [['ab'], ['c']]]);
+      const [header, , body] = result.trim().split('\n');
+
+      // Both rows occupy the same rendered width once measured properly
+      assert.equal(stringWidth(/** @type {string} */ (header)), stringWidth(/** @type {string} */ (body)));
+    });
+
+    it('should not pass align to mdast in the ansi style', () => {
+      // In the ansi style, align is set to undefined regardless of input
       // This means the output should still work but without alignment hints
       const result = moc.table(
         [

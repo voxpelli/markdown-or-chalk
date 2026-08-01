@@ -3,14 +3,12 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 
-describe('MarkdownOrChalk', () => {
+describe('output styler', () => {
   describe('markdown mode', () => {
     /** @type {AnyStyledOutput} */
     let moc;
@@ -44,6 +42,16 @@ describe('MarkdownOrChalk', () => {
           assert.equal(typeof result, 'string');
           assert.equal(result, `\n${''.padStart(level, '#')} Test\n`);
         }
+      });
+
+      it('should clamp out of range and invalid levels', () => {
+        assert.equal(moc.header('Test', 0), '\n# Test\n');
+        assert.equal(moc.header('Test', 42), '\n###### Test\n');
+        assert.equal(moc.header('Test', Number.NaN), '\n# Test\n');
+      });
+
+      it('should collapse newlines in the heading text', () => {
+        assert.equal(moc.header('Line1\nLine2', 2), '\n## Line1 Line2\n');
       });
     });
 
@@ -92,21 +100,20 @@ describe('MarkdownOrChalk', () => {
     });
   });
 
-  describe('chalk mode', () => {
+  describe('ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
 
     after(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     describe('constructor', () => {

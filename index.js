@@ -1,6 +1,6 @@
 // *** Helpers ***
 
-export { mdastLinkify } from './lib/utils/mdast-helpers.js';
+export { ensurePhrasingContentList, mdastLinkify } from './lib/utils/mdast-helpers.js';
 export { mdastListHelper } from './lib/utils/mdast-list.js';
 export { mdastTableHelper } from './lib/utils/mdast-table.js';
 

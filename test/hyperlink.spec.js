@@ -3,12 +3,10 @@ import {
   after, before, describe, it,
 } from 'node:test';
 
-import chalk from 'chalk';
-
 import { getOutputStyler } from '../index.js';
+import { forceColor } from './force-color.js';
 
 /** @import { AnyStyledOutput } from '../index.js' */
-/** @import { ColorSupportLevel } from 'chalk' */
 
 describe('hyperlink', () => {
   describe('markdown mode', () => {
@@ -41,21 +39,20 @@ describe('hyperlink', () => {
     });
   });
 
-  describe('chalk mode', () => {
+  describe('ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
-    /** @type {ColorSupportLevel} */
-    let originalLevel;
+    /** @type {() => void} */
+    let restoreColor;
 
     before(() => {
-      originalLevel = chalk.level;
-      chalk.level = /** @type {ColorSupportLevel} */ (0);
+      restoreColor = forceColor('0');
       moc = getOutputStyler('ansi');
     });
 
     after(() => {
-      chalk.level = originalLevel;
+      restoreColor();
     });
 
     it('should return a string containing text or url', () => {
@@ -75,6 +72,77 @@ describe('hyperlink', () => {
 
     it('should return url when fallbackToUrl is true in non-supporting terminal', () => {
       assert.equal(moc.hyperlink('text', 'url', { fallbackToUrl: true }), 'url');
+    });
+  });
+
+  describe('url filtering', () => {
+    /** @type {AnyStyledOutput} */
+    let moc;
+
+    before(() => {
+      moc = getOutputStyler('markdown');
+    });
+
+    it('should block javascript: urls', () => {
+      assert.equal(moc.hyperlink('text', 'javascript:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', 'JaVaScRiPt:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', '  javascript:alert(1)'), 'text');
+    });
+
+    it('should block javascript: urls hidden by control characters', () => {
+      assert.equal(moc.hyperlink('text', 'java\u0000script:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', 'java\tscript:alert(1)'), 'text');
+      assert.equal(moc.hyperlink('text', '\u0001javascript:alert(1)'), 'text');
+    });
+
+    it('should block data: and vbscript: urls', () => {
+      assert.equal(moc.hyperlink('text', 'data:text/html,foo'), 'text');
+      assert.equal(moc.hyperlink('text', 'vbscript:msgbox'), 'text');
+    });
+
+    it('should strip control characters from allowed urls', () => {
+      assert.equal(moc.hyperlink('text', 'https://example.com/\u0007a'), '[text](https://example.com/a)');
+    });
+  });
+
+  describe('markdown escaping', () => {
+    /** @type {AnyStyledOutput} */
+    let moc;
+
+    before(() => {
+      moc = getOutputStyler('markdown');
+    });
+
+    it('should escape parentheses in urls', () => {
+      assert.equal(
+        moc.hyperlink('a', 'https://en.wikipedia.org/wiki/Foo_(bar)'),
+        String.raw`[a](https://en.wikipedia.org/wiki/Foo_\(bar\))`
+      );
+    });
+
+    it('should wrap urls containing spaces in angle brackets', () => {
+      assert.equal(moc.hyperlink('a', 'https://example.com/a b'), '[a](<https://example.com/a b>)');
+    });
+
+    it('should escape square brackets in the link text', () => {
+      assert.equal(moc.hyperlink('a]b', 'https://example.com/'), String.raw`[a\]b](https://example.com/)`);
+    });
+
+    it('should not markdown-escape the link text, so it composes', () => {
+      // `text` is already-formatted output, exactly as it is for bold() and the
+      // rest — escaping markdown syntax here would turn hyperlink(bold(x), url)
+      // into literal asterisks. Only link *structure* characters are escaped.
+      assert.equal(moc.hyperlink(moc.bold('x'), 'https://example.com/'), '[**x**](https://example.com/)');
+      assert.equal(moc.hyperlink('a*b_c', 'https://example.com/'), '[a*b_c](https://example.com/)');
+    });
+
+    it('should compose the same way in every style', () => {
+      for (const style of /** @type {const} */ (['markdown', 'ansi', 'text', 'html'])) {
+        const styler = getOutputStyler(style);
+        const result = styler.hyperlink(styler.bold('x'), 'https://example.com/');
+
+        assert.ok(result.includes(styler.bold('x')), `${style}: ${result}`);
+      }
     });
   });
 });

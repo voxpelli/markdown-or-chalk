@@ -1,7 +1,7 @@
 {
   "name": "markdown-or-chalk",
   "version": "0.3.2",
-  "description": "Prints through a single interface as Chalk enhanced CLI output or as Markdown",
+  "description": "Print through a single interface as Markdown, ANSI terminal, HTML or plain text",
   "homepage": "https://github.com/voxpelli/markdown-or-chalk",
   "repository": {
     "type": "git",
@@ -9,17 +9,17 @@
   },
   "keywords": [
     "markdown",
-    "chalk",
     "terminal",
+    "ansi",
+    "html",
     "formatting",
     "mdast",
-    "cli",
-    "ansi"
+    "cli"
   ],
   "author": "Pelle Wessman <pelle@kodfabrik.se> (http://kodfabrik.se/)",
   "license": "MIT",
   "engines": {
-    "node": "^22.13.0 || >=24"
+    "node": "^22.19.0 || >=24.5.0"
   },
   "type": "module",
   "exports": "./index.js",
@@ -36,6 +36,7 @@
     "lib/**/*.d.cts.map"
   ],
   "scripts": {
+    "bench": "node bench/cold-start.js",
     "build": "run-s build:*",
     "build:0": "run-s clean",
     "build:1-declaration": "tsc -p declaration.tsconfig.json",
@@ -62,30 +63,33 @@
   },
   "dependencies": {
     "@types/mdast": "^4.0.3",
-    "boxen": "^8.0.1",
-    "chalk": "^6.0.0",
-    "cli-highlight": "^2.1.11",
     "is-unicode-supported": "^2.0.0",
+    "mdast-util-gfm-footnote": "^2.1.0",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
     "mdast-util-gfm-table": "^2.0.0",
+    "mdast-util-gfm-task-list-item": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "mdast-util-to-string": "^4.0.0",
-    "strip-ansi": "^7.1.0",
+    "string-width": "^8.2.2",
     "terminal-link": "^5.0.0"
   },
   "devDependencies": {
     "@ast-grep/cli": "^0.44.1",
-    "@types/node": "^22.20.1",
+    "@types/node": "^24.5.0",
     "@voxpelli/ast-grep-rules": "^0.1.0",
     "@voxpelli/eslint-config": "^25.1.0",
     "@voxpelli/remark-preset": "^0.1.1",
     "@voxpelli/tsconfig": "^16.2.1",
+    "boxen": "^8.0.1",
     "c8": "^12.0.0",
+    "emphasize": "^7.0.0",
     "eslint": "^9.39.5",
     "husky": "^9.1.7",
     "installed-check": "^10.0.1",
     "knip": "^6.29.0",
     "npm-run-all2": "^9.0.2",
     "remark-cli": "^12.0.0",
+    "strip-ansi": "^7.2.0",
     "type-coverage": "^2.30.1",
     "typescript": "~6.0.3",
     "validate-conventional-commit": "^1.0.4"
@@ -94,5 +98,17 @@
     "plugins": [
       "@voxpelli/remark-preset"
     ]
+  },
+  "peerDependencies": {
+    "boxen": "^8.0.1",
+    "emphasize": "^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "boxen": {
+      "optional": true
+    },
+    "emphasize": {
+      "optional": true
+    }
   }
 }
