@@ -141,7 +141,7 @@ describe('table', () => {
     });
   });
 
-  describe('table() chalk mode', () => {
+  describe('table() ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
@@ -263,8 +263,8 @@ describe('table', () => {
       assert.equal(stringWidth(/** @type {string} */ (header)), stringWidth(/** @type {string} */ (body)));
     });
 
-    it('should not pass align to mdast in chalk mode', () => {
-      // In chalk mode, align is set to undefined regardless of input
+    it('should not pass align to mdast in the ansi style', () => {
+      // In the ansi style, align is set to undefined regardless of input
       // This means the output should still work but without alignment hints
       const result = moc.table(
         [

@@ -100,7 +100,7 @@ describe('output styler', () => {
     });
   });
 
-  describe('chalk mode', () => {
+  describe('ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 

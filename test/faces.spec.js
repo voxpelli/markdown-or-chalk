@@ -55,18 +55,37 @@ describe('text style', () => {
     assert.equal(moc.header('Hi', 2), '\nHi\n');
   });
 
-  it('should emit no ansi escape sequences from fromMdast', () => {
-    const result = getMdastOutputter('text')({
-      type: 'root',
-      children: [
-        { type: 'heading', depth: 1, children: [{ type: 'text', value: 'T' }] },
-        { type: 'paragraph', children: [{ type: 'strong', children: [{ type: 'text', value: 'b' }] }] },
-        { type: 'code', lang: 'js', value: 'const x = 1;' },
-      ],
+  describe('with colour forced on', () => {
+    /** @type {() => void} */
+    let restoreForced;
+
+    // The rest of this file runs at colour off, where no style emits escapes
+    // at all — so an escape-absence assertion there passes for the wrong
+    // reason and would survive deleting the stripping entirely
+    before(() => {
+      restoreForced = forceColor('3');
     });
 
-    assert.ok(!result.includes('\u001B'), 'should contain no escape character');
-    assert.match(result, /const x = 1;/);
+    after(() => {
+      restoreForced();
+    });
+
+    it('should emit no ansi escape sequences from fromMdast', () => {
+      const result = getMdastOutputter('text')({
+        type: 'root',
+        children: [
+          { type: 'heading', depth: 1, children: [{ type: 'text', value: 'T' }] },
+          { type: 'paragraph', children: [{ type: 'strong', children: [{ type: 'text', value: 'b' }] }] },
+          // Literals carrying escapes: stripping, not disabled styling, is
+          // what has to remove these
+          { type: 'text', value: '\u001B[2Jwiped\u001B]8;;https://e.com/\u0007' },
+          { type: 'code', lang: 'js', value: 'const x = 1;' },
+        ],
+      });
+
+      assert.ok(!result.includes('\u001B'), 'should contain no escape character');
+      assert.match(result, /const x = 1;/);
+    });
   });
 });
 

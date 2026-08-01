@@ -39,7 +39,7 @@ describe('list and json', () => {
     });
   });
 
-  describe('list() chalk mode', () => {
+  describe('list() ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 
@@ -98,7 +98,7 @@ describe('list and json', () => {
     });
   });
 
-  describe('json() chalk mode', () => {
+  describe('json() ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
 

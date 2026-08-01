@@ -33,7 +33,7 @@ Returns a formatter for one of these styles:
 
 * `'markdown'` – Markdown output
 * `'ansi'` – ANSI terminal output
-* `'html'` – Semantic HTML, with no classes or inline styles
+* `'html'` – Semantic HTML, with no inline styles and no classes except the conventional `language-*` on code blocks
 * `'text'` – Plain text, with no ANSI and no markup — for pipes, log files and `NO_COLOR`
 * `'ansi-rich'` – `'ansi'` plus boxed, syntax-highlighted code blocks
 
@@ -127,7 +127,7 @@ console.log(fromMdast(list));
 // * plain text item
 ```
 
-## Migration: 0.2.x → 0.3.x
+## Migration: 0.2.x → 0.4.x
 
 ### What changed
 

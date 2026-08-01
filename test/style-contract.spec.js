@@ -100,7 +100,9 @@ describe('style contract', () => {
 
     for (const [name, node] of Object.entries(SHARED_CONSTRUCTS)) {
       it(`should render ${name} in every style`, () => {
-        for (const style of /** @type {const} */ (['markdown', 'ansi', 'html', 'text'])) {
+        // ansi-rich included: it is the style most likely to hide a crash, since
+        // it swaps in boxen and emphasize on top of the shared handlers
+        for (const style of /** @type {const} */ (['markdown', 'ansi', 'ansi-rich', 'html', 'text'])) {
           assert.doesNotThrow(
             () => getMdastOutputter(style)(/** @type {Nodes} */ (node)),
             `${name} should render in the ${style} style`

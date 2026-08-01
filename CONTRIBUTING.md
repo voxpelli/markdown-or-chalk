@@ -11,7 +11,7 @@ npm install
 ## Commands
 
 * `npm test` — full validation (all checks + tests)
-* `npm run check` — checks only, no tests (lint + type-check + type-coverage + knip + ast-grep + markdown lint + installed-check)
+* `npm run check` — checks only, no tests. Runs `clean` first (which deletes the generated `.d.ts` / `.d.cts` declarations), then lint + type-check + type-coverage + knip + ast-grep + markdown lint + installed-check in parallel
 * `npm run test:node` — tests only (`node --test` with c8 coverage)
 * `npm run build` — generate declaration files
 

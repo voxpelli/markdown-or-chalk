@@ -48,7 +48,7 @@ describe('strikethrough and code', () => {
     });
   });
 
-  describe('chalk mode', () => {
+  describe('ansi style', () => {
     /** @type {AnyStyledOutput} */
     let moc;
     /** @type {() => void} */
