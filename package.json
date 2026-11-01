@@ -73,7 +73,7 @@
     "terminal-link": "^5.0.0"
   },
   "devDependencies": {
-    "@ast-grep/cli": "^0.44.1",
+    "@ast-grep/cli": "^0.51.0",
     "@types/node": "^22.20.1",
     "@voxpelli/ast-grep-rules": "^0.1.0",
     "@voxpelli/eslint-config": "^25.1.0",
